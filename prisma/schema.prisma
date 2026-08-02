@@ -1,0 +1,110 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model AdminUser {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String   // Hashed password
+  nama      String
+  jabatan   String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}
+
+model Berita {
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  category  String
+  summary   String
+  content   String
+  author    String
+  date      DateTime @default(now())
+  imageUrl  String?
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DokumenHukum {
+  id          String   @id @default(uuid())
+  nomor       String
+  tahun       Int
+  judul       String
+  kategori    String   // Perdes, Perkades, Keputusan Kades, RPJMDes, APBDes
+  deskripsi   String
+  fileUrl     String?
+  tglTerbit   DateTime
+  status      String   @default("Berlaku")
+  createdAt   DateTime @default(now())
+}
+
+model UMKM {
+  id           String   @id @default(uuid())
+  namaUsaha    String
+  pemilik      String
+  kategori     String   // Kuliner, Pertanian, Kerajinan, Jasa
+  deskripsi    String
+  alamat       String
+  kontak       String
+  omzetBulanan Float?
+  produkUtama  String
+  imageUrl     String?
+  isVerified   Boolean  @default(true)
+  createdAt    DateTime @default(now())
+}
+
+model KomoditasPertanian {
+  id            String   @id @default(uuid())
+  nama          String   // Padi, Jagung, Cabai, Sapi
+  kategori      String   // Tanaman Pangan, Hortikultura, Peternakan
+  luasLahan     Float?   // Hektar
+  jumlahTernak  Int?     // Ekor
+  estimasiHasil String
+  musimTanam    String
+  musimPanen    String
+  kelompokTani  String
+  lokasi        String
+  updatedAt     DateTime @updatedAt
+}
+
+model ISPARecord {
+  id               String   @id @default(uuid())
+  nama             String
+  usia             Int
+  dusun            String
+  gejala           String   // JSON string of symptoms
+  skorRisiko       Int
+  kategoriRisiko   String   // Rendah, Sedang, Tinggi
+  rekomendasi      String
+  createdAt        DateTime @default(now())
+}
+
+model APBDesEntry {
+  id         String   @id @default(uuid())
+  tahun      Int
+  kategori   String   // Pendapatan, Belanja, Pembiayaan
+  subsektor  String
+  anggaran   Float
+  realisasi  Float
+  keterangan String?
+}
+
+model LaporanAntiKorupsi {
+  id             String   @id @default(uuid())
+  kodeLaporan    String   @unique
+  judulLaporan   String
+  kategori       String   // Pelayanan Publik, Pungli, Transparansi Anggaran, Lainnya
+  deskripsi      String
+  lokasiKejadian String
+  isAnonim       Boolean  @default(true)
+  namaPelapor    String?
+  kontakPelapor  String?
+  status         String   @default("Diproses") // Diproses, Diverifikasi, Selesai
+  createdAt      DateTime @default(now())
+}
