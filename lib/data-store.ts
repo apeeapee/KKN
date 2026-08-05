@@ -646,11 +646,11 @@ export async function getVillageProfile(): Promise<VillageProfile> {
 export async function getNewsList(): Promise<NewsItem[]> {
   try {
     if (process.env.DATABASE_URL && prisma) {
-      const dbNews = await prisma.berita.findMany({
+      const dbNews = await (prisma as any).berita.findMany({
         orderBy: { date: 'desc' }
       });
       if (dbNews.length > 0) {
-        return dbNews.map(n => ({
+        return dbNews.map((n: any) => ({
           id: n.id,
           title: n.title,
           slug: n.slug,
@@ -673,11 +673,11 @@ export async function getNewsList(): Promise<NewsItem[]> {
 export async function getLegalDocuments(): Promise<LegalDocument[]> {
   try {
     if (process.env.DATABASE_URL && prisma) {
-      const dbDocs = await prisma.dokumenHukum.findMany({
+      const dbDocs = await (prisma as any).dokumenHukum.findMany({
         orderBy: { tahun: 'desc' }
       });
       if (dbDocs.length > 0) {
-        return dbDocs.map(d => ({
+        return dbDocs.map((d: any) => ({
           id: d.id,
           nomor: d.nomor,
           tahun: d.tahun,
@@ -699,11 +699,11 @@ export async function getLegalDocuments(): Promise<LegalDocument[]> {
 export async function getUMKMList(): Promise<UMKMItem[]> {
   try {
     if (process.env.DATABASE_URL && prisma) {
-      const dbUMKM = await prisma.uMKM.findMany({
+      const dbUMKM = await (prisma as any).uMKM.findMany({
         orderBy: { createdAt: 'desc' }
       });
       if (dbUMKM.length > 0) {
-        return dbUMKM.map(u => ({
+        return dbUMKM.map((u: any) => ({
           id: u.id,
           namaUsaha: u.namaUsaha,
           pemilik: u.pemilik,
