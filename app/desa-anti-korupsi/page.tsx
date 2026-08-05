@@ -8,14 +8,28 @@ import {
   CheckCircle2, 
   Award, 
   Info,
-  Scale
+  Scale,
+  ExternalLink,
+  FileText,
+  Eye,
+  X,
+  Search,
+  Calendar,
+  Filter
 } from 'lucide-react';
 import { mockDesaAntiKorupsiInfo } from '@/lib/mock-data';
 import { useData } from '@/components/DataProvider';
 
 export default function DesaAntiKorupsiPage() {
   const info = mockDesaAntiKorupsiInfo;
-  const { addWBSReport } = useData();
+  const { addWBSReport, antiKorupsiIndikatorList } = useData();
+
+  // Search and Category Filter States (Matching JDIH Hukum & 18 KPK Indicators)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedIndikator, setSelectedIndikator] = useState('Semua');
+
+  // PDF Preview Modal State
+  const [activePdfModal, setActivePdfModal] = useState<{ title: string; url: string } | null>(null);
 
   // WBS Form State
   const [formData, setFormData] = useState({
@@ -74,55 +88,147 @@ export default function DesaAntiKorupsiPage() {
         </div>
       </div>
 
-      {/* 5 Indikator Utama Desa Anti Korupsi KPK */}
-      <section className="space-y-6">
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            Standar Integritas KPK
-          </span>
-          <h2 className="text-2xl font-extrabold text-slate-900">
-            5 Indikator Utama Desa Anti Korupsi
-          </h2>
-          <p className="text-xs text-slate-500">
-            Pencapaian pemenuhan indikator tata kelola pemerintahan yang jujur & terpercaya di Desa Banyuurip.
-          </p>
+      {/* Filter & Search Controls (Disesuaikan dengan 18 Indikator Resmi KPK) */}
+      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+          
+          {/* Search Input */}
+          <div className="relative w-full lg:w-72">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Cari kata kunci atau nomor..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+            />
+          </div>
+
+          {/* Dropdown Selector 18 Indikator Spesifik */}
+          <div className="flex items-center gap-2 text-xs">
+            <span className="font-bold text-slate-700 shrink-0 flex items-center gap-1">
+              <Filter className="w-3.5 h-3.5 text-emerald-700" /> Indikator (1-18):
+            </span>
+            <select
+              value={selectedIndikator}
+              onChange={(e) => setSelectedIndikator(e.target.value)}
+              className="w-full lg:w-72 p-2.5 rounded-xl border border-slate-300 bg-white font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
+            >
+              <option value="Semua">Semua 18 Indikator KPK</option>
+              <option value="IND-01">Indikator 01: Pertanggungjawaban APBDes</option>
+              <option value="IND-02">Indikator 02: Pengawasan & Evaluasi Perangkat</option>
+              <option value="IND-03">Indikator 03: Pengendalian Gratifikasi & Suap</option>
+              <option value="IND-04">Indikator 04: Pengadaan Barang/Jasa Desa</option>
+              <option value="IND-05">Indikator 05: Pakta Integritas Perangkat Desa</option>
+              <option value="IND-06">Indikator 06: Evaluasi Kinerja Perangkat Desa</option>
+              <option value="IND-07">Indikator 07: Tindak Lanjut Hasil Examination</option>
+              <option value="IND-08">Indikator 08: Aparatur Bebas Pidana Korupsi</option>
+              <option value="IND-09">Indikator 09: Layanan Pengaduan WBS</option>
+              <option value="IND-10">Indikator 10: Survei Kepuasan Masyarakat (IKM)</option>
+              <option value="IND-11">Indikator 11: Standar Pelayanan Minimal (SPM)</option>
+              <option value="IND-12">Indikator 12: Media Informasi APBDes</option>
+              <option value="IND-13">Indikator 13: Maklumat Pelayanan</option>
+              <option value="IND-14">Indikator 14: Partisipasi Penyusunan RKP Desa</option>
+              <option value="IND-15">Indikator 15: Kesadaran Mencegah Gratifikasi</option>
+              <option value="IND-16">Indikator 16: Keterlibatan LKD Pembangunan</option>
+              <option value="IND-17">Indikator 17: Budaya Lokal & Hukum Adat</option>
+              <option value="IND-18">Indikator 18: Peran Tokoh Warga & Perempuan</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Document List (Tampilan Persis Seperti Fitur Peraturan Desa / JDIH Hukum) */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center text-xs text-slate-500">
+          <span>Menampilkan {
+            antiKorupsiIndikatorList.filter((doc) => {
+              const matchesSearch = doc.judul.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    doc.kodeIndikator.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    doc.deskripsi.toLowerCase().includes(searchQuery.toLowerCase());
+              const matchesInd = selectedIndikator === 'Semua' || doc.kodeIndikator === selectedIndikator;
+              return matchesSearch && matchesInd;
+            }).length
+          } Dokumen Indikator & Berkas Terverifikasi</span>
+          <span>Status: Terpenuhi 100% KPK</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {info.indikatorKPK.map((ind) => (
-            <div 
-              key={ind.nomor}
-              className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-4 flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="w-8 h-8 rounded-xl bg-emerald-700 text-white font-extrabold text-xs flex items-center justify-center shadow-xs">
-                    {ind.nomor}
-                  </span>
-                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">
-                    {ind.statusPencapaian}
-                  </span>
+        <div className="grid grid-cols-1 gap-4">
+          {antiKorupsiIndikatorList
+            .filter((doc) => {
+              const matchesSearch = doc.judul.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    doc.kodeIndikator.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    doc.deskripsi.toLowerCase().includes(searchQuery.toLowerCase());
+              const matchesInd = selectedIndikator === 'Semua' || doc.kodeIndikator === selectedIndikator;
+              return matchesSearch && matchesInd;
+            })
+            .map((doc) => (
+              <div 
+                key={doc.id}
+                className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+              >
+                <div className="space-y-3 flex-grow">
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-md border border-emerald-200">
+                      {doc.kategori}
+                    </span>
+                    <span className="font-bold text-slate-900">{doc.kodeIndikator}</span>
+                    <span className="text-slate-400">•</span>
+                    <span className="text-slate-500 flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+                      Tahun {doc.tahun}
+                    </span>
+                    <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 text-[10px]">
+                      ✓ {doc.status}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-base text-slate-900 leading-snug">
+                    {doc.judul}
+                  </h3>
+
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    {doc.deskripsi}
+                  </p>
+
+                  {/* Sub PDF File Links (Langsung Mengarah ke GDrive PDF) */}
+                  {doc.pdfFiles && doc.pdfFiles.length > 0 && (
+                    <div className="pt-2 flex flex-wrap items-center gap-2">
+                      <span className="text-[11px] font-bold text-slate-400 block w-full">File Berkas Bukti PDF Terkait:</span>
+                      {doc.pdfFiles.map((pdf) => (
+                        <a
+                          key={pdf.id}
+                          href={pdf.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-slate-50 hover:bg-emerald-50 text-slate-800 hover:text-emerald-900 border border-slate-200 hover:border-emerald-300 text-[11px] font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all group/file"
+                          title="Klik untuk langsung membaca file PDF di Google Drive"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>{pdf.namaBerkas}</span>
+                          <ExternalLink className="w-3 h-3 text-slate-400 group-hover/file:text-emerald-700 transition-colors" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <h3 className="font-bold text-sm text-slate-900 leading-snug">{ind.judul}</h3>
-
-                <ul className="space-y-1.5 text-[11px] text-slate-600">
-                  {ind.subIndikator.map((sub, idx) => (
-                    <li key={idx} className="flex items-start gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                      <span>{sub}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="flex items-center gap-3 shrink-0 self-start md:self-center">
+                  <a
+                    href={doc.gdriveUrl && doc.gdriveUrl !== '#' ? doc.gdriveUrl : `https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2 group"
+                  >
+                    <ExternalLink className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    Buka Dokumen (Google Drive)
+                  </a>
+                </div>
               </div>
-
-              <div className="pt-3 border-t border-slate-100 text-[10px] text-slate-400 font-medium">
-                Kriteria Pemenuhan Terverifikasi
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
-      </section>
+      </div>
 
       {/* Whistleblowing System (WBS) & Form Laporan Anonim */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -295,6 +401,46 @@ export default function DesaAntiKorupsiPage() {
         </div>
 
       </section>
+
+      {/* PDF Preview Modal */}
+      {activePdfModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-4xl w-full h-[85vh] flex flex-col shadow-2xl overflow-hidden relative border border-slate-700">
+            <div className="p-4 sm:p-5 border-b flex justify-between items-center bg-slate-900 text-white">
+              <div>
+                <h3 className="font-bold text-sm sm:text-base text-emerald-400 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-emerald-400" />
+                  {activePdfModal.title}
+                </h3>
+                <p className="text-[11px] text-slate-400">Dokumen PDF Resmi Desa Anti-Korupsi Desa Banyuurip</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href={activePdfModal.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" /> Buka Tab Baru
+                </a>
+                <button
+                  onClick={() => setActivePdfModal(null)}
+                  className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 bg-slate-100 relative">
+              <iframe
+                src={activePdfModal.url.replace('/view', '/preview')}
+                className="w-full h-full border-0"
+                title={activePdfModal.title}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

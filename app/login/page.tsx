@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Building2, Lock, User, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Building2, Lock, User, ArrowRight, ShieldCheck, AlertCircle, CheckSquare, Square } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
@@ -11,8 +11,17 @@ function LoginForm() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Auto redirect if session indicator exists in localStorage
+  useEffect(() => {
+    const localSession = localStorage.getItem('byu_admin_session');
+    if (localSession === 'active') {
+      router.push(redirectPath);
+    }
+  }, [redirectPath, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,15 +29,24 @@ function LoginForm() {
     setErrorMsg('');
 
     try {
+      let customAccounts = [];
+      try {
+        const localAccounts = localStorage.getItem('byu_admin_users');
+        if (localAccounts) customAccounts = JSON.parse(localAccounts);
+      } catch (e) {}
+
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, rememberMe, customAccounts }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.success) {
+        if (rememberMe) {
+          localStorage.setItem('byu_admin_session', 'active');
+        }
         router.push(redirectPath);
         router.refresh();
       } else {
@@ -99,6 +117,20 @@ function LoginForm() {
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
             />
           </div>
+        </div>
+
+        <div 
+          onClick={() => setRememberMe(!rememberMe)}
+          className="flex items-center gap-2 text-slate-700 cursor-pointer select-none py-1"
+        >
+          {rememberMe ? (
+            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0" />
+          ) : (
+            <Square className="w-4 h-4 text-slate-400 shrink-0" />
+          )}
+          <span className="text-[11px] font-medium">
+            Tetap Masuk (Simpan Sesi Admin - 30 Hari Tanpa Auto Logout)
+          </span>
         </div>
 
         <button

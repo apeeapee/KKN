@@ -104,7 +104,7 @@ export default function KesehatanRESPIRAPage() {
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-rose-900 via-pink-900 to-rose-950 text-white p-8 sm:p-12 shadow-xl">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="bg-pink-800/80 text-pink-200 text-xs font-bold px-3 py-1 rounded-full border border-pink-500/40">
-            Pengembangan E-Book & Skrining ISPA RESPIRA • Azizah Ras Karolina Purba (FK / Keperawatan)
+            Pengembangan E-Book & Skrining ISPA RESPIRA Desa Banyuurip
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight flex items-center gap-3">
             <HeartPulse className="w-10 h-10 text-pink-400" />
@@ -364,7 +364,7 @@ export default function KesehatanRESPIRAPage() {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-slate-900">{mockISPAInfo.judul}</h2>
-              <p className="text-xs text-slate-500">Materi Edukasi Resmi disusun oleh Azizah Ras Karolina Purba (FK / Keperawatan)</p>
+              <p className="text-xs text-slate-500">Materi Edukasi Kesehatan Resmi Desa Banyuurip</p>
             </div>
           </div>
 

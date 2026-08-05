@@ -28,7 +28,7 @@ export default function HomePage() {
   const services = [
     {
       title: "Skrining ISPA & RESPIRA",
-      author: "Azizah Ras Karolina (Keperawatan)",
+      author: "Layanan Kesehatan Desa",
       desc: "Modul e-book edukasi kesehatan & form skrining risiko ISPA mandiri untuk keluarga.",
       icon: HeartPulse,
       href: "/kesehatan-respira",
@@ -37,7 +37,7 @@ export default function HomePage() {
     },
     {
       title: "Pertanian & Musim Tanam",
-      author: "Dienka Hanun Thalia (Agribisnis)",
+      author: "Potensi Agribisnis Desa",
       desc: "Pendataan komoditas unggulan (Padi, Jagung, Cabai, Sapi) & Kalender Musim Tanam.",
       icon: Sprout,
       href: "/pertanian-logistik",
@@ -46,7 +46,7 @@ export default function HomePage() {
     },
     {
       title: "JDIH & Hukum Desa",
-      author: "Hazel Abrar (Ilmu Hukum)",
+      author: "Regulasi & Dokumentasi Hukum",
       desc: "Pusat dokumentasi Peraturan Desa (Perdes, Perkades, RPJMDes, & Keputusan Kades).",
       icon: FileText,
       href: "/jdih-hukum",
@@ -55,7 +55,7 @@ export default function HomePage() {
     },
     {
       title: "Transparansi APBDes & PBB",
-      author: "Lintang Qonita R. (Akuntansi Perpajakan)",
+      author: "Transparansi Keuangan Desa",
       desc: "Visualisasi grafik realisasi anggaran desa & panduan praktis bayar pajak PBB-P2 online.",
       icon: PieChart,
       href: "/apbdes-pajak",
@@ -63,8 +63,8 @@ export default function HomePage() {
       badge: "Keuangan"
     },
     {
-      title: "Edukasi Budaya 5S Jepang",
-      author: "M. Daffa Fahreza (Sastra Jepang)",
+      title: "Edukasi Budaya 5S",
+      author: "Budaya Kerja & Lingkungan",
       desc: "Infografis & panduan budaya Ringkas, Rapi, Resik, Rawat, Rajin untuk kebersihan desa.",
       icon: BookOpenCheck,
       href: "/edukasi-5s",
@@ -73,7 +73,7 @@ export default function HomePage() {
     },
     {
       title: "Logistik & Aset Pertanian",
-      author: "Salwa Khalishah (Manajemen Logistik)",
+      author: "Fasilitas & Aset Desa",
       desc: "Peta jalur distribusi hasil panen & pendataan gudang/lumbung aset pertanian desa.",
       icon: Truck,
       href: "/pertanian-logistik#logistik",
@@ -82,8 +82,8 @@ export default function HomePage() {
     },
     {
       title: "Katalog & Profil UMKM",
-      author: "Sekar Ayu Tiara M. (Akuntansi)",
-      desc: "Direktori produk unggulan warga desa & modul pencatatan keuangan sederhana.",
+      author: "Pemberdayaan Ekonomi Warga",
+      desc: "Direktori promosi produk dan usaha unggulan warga Desa Banyuurip.",
       icon: Store,
       href: "/umkm",
       color: "from-emerald-600 to-green-700",
@@ -100,7 +100,7 @@ export default function HomePage() {
     },
     {
       title: "Profil & Sejarah Desa",
-      author: "Catur Purna Laras (Sejarah)",
+      author: "Informasi Publik Desa",
       desc: "Dokumentasi asal-usul, nilai budaya, struktur pemerintahan & identitas Banyuurip.",
       icon: Building2,
       href: "/profil",
@@ -119,7 +119,7 @@ export default function HomePage() {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 bg-emerald-800/80 backdrop-blur-md px-4 py-1.5 rounded-full border border-emerald-500/40 text-emerald-200 text-xs font-semibold">
               <Sparkles className="w-4 h-4 text-emerald-300 animate-pulse" />
-              Banyuurip Digital Gateway • KKN Multidisiplin 2026
+              Portal Informasi & Pelayanan Digital Resmi Desa Banyuurip
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
@@ -199,7 +199,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-                  <span>Pencatatan Keuangan & Direktori UMKM</span>
+                  <span>Direktori & Katalog UMKM Desa</span>
                 </div>
               </div>
 

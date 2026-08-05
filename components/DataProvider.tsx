@@ -8,16 +8,20 @@ import {
   mockAgriculture, 
   mockAPBDes, 
   mockAntiKorupsiLaporan,
+  mockAntiKorupsiIndikator,
   mockISPALogs,
   mockVillageProfile,
+  mockAdminUsers,
   NewsItem, 
   LegalDocument, 
   UMKMItem, 
   AgricultureData, 
   APBDesData, 
   LaporanAntiKorupsiItem,
+  IndikatorAntiKorupsiItem,
   ISPALogItem,
-  VillageProfile
+  VillageProfile,
+  AdminUser
 } from '@/lib/mock-data';
 
 interface DataContextType {
@@ -27,8 +31,10 @@ interface DataContextType {
   agriData: AgricultureData;
   apbdesData: APBDesData;
   wbsList: LaporanAntiKorupsiItem[];
+  antiKorupsiIndikatorList: IndikatorAntiKorupsiItem[];
   ispaLogs: ISPALogItem[];
   villageProfile: VillageProfile;
+  adminUsers: AdminUser[];
 
   // CRUD Actions
   addNews: (news: Omit<NewsItem, 'id' | 'views'>) => void;
@@ -47,6 +53,11 @@ interface DataContextType {
   updateAgriKomoditas: (id: string, updated: Partial<AgricultureData['komoditas'][0]>) => void;
   addAgriKomoditas: (kom: Omit<AgricultureData['komoditas'][0], 'id'>) => void;
   deleteAgriKomoditas: (id: string) => void;
+  updateAgriData: (updated: Partial<AgricultureData>) => void;
+
+  addBalaiDesaAsset: (asset: Omit<AgricultureData['logistikAset'][0], 'id'>) => void;
+  updateBalaiDesaAssetStatus: (id: string, status: string) => void;
+  deleteBalaiDesaAsset: (id: string) => void;
 
   updateAPBDes: (updated: Partial<APBDesData>) => void;
 
@@ -54,11 +65,20 @@ interface DataContextType {
   updateWBSStatus: (id: string, status: 'Diproses' | 'Diverifikasi' | 'Selesai') => void;
   deleteWBSReport: (id: string) => void;
 
+  addAntiKorupsiIndikator: (ind: Omit<IndikatorAntiKorupsiItem, 'id'>) => void;
+  updateAntiKorupsiIndikator: (id: string, updated: Partial<IndikatorAntiKorupsiItem>) => void;
+  deleteAntiKorupsiIndikator: (id: string) => void;
+
   updateISPATindakan: (id: string, tindakan: ISPALogItem['tindakanAdmin']) => void;
 
   addPerangkatDesa: (p: { nama: string; jabatan: string; foto: string }) => void;
   deletePerangkatDesa: (nama: string) => void;
   updateSejarahDesa: (sejarah: string) => void;
+
+  addAdminUser: (user: Omit<AdminUser, 'id' | 'createdAt'>) => void;
+  updateAdminUser: (id: string, updated: Partial<AdminUser>) => void;
+  deleteAdminUser: (id: string) => void;
+  toggleStatusAdminUser: (id: string) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -70,8 +90,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [agriData, setAgriData] = useState<AgricultureData>(mockAgriculture);
   const [apbdesData, setApbdesData] = useState<APBDesData>(mockAPBDes);
   const [wbsList, setWbsList] = useState<LaporanAntiKorupsiItem[]>(mockAntiKorupsiLaporan);
+  const [antiKorupsiIndikatorList, setAntiKorupsiIndikatorList] = useState<IndikatorAntiKorupsiItem[]>(mockAntiKorupsiIndikator);
   const [ispaLogs, setIspaLogs] = useState<ISPALogItem[]>(mockISPALogs);
   const [villageProfile, setVillageProfile] = useState<VillageProfile>(mockVillageProfile);
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>(mockAdminUsers);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -94,11 +116,17 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       const savedWbs = localStorage.getItem('byu_wbs');
       if (savedWbs) setWbsList(JSON.parse(savedWbs));
 
+      const savedIndikator = localStorage.getItem('byu_anti_korupsi_indikator');
+      if (savedIndikator) setAntiKorupsiIndikatorList(JSON.parse(savedIndikator));
+
       const savedIspa = localStorage.getItem('byu_ispa_logs');
       if (savedIspa) setIspaLogs(JSON.parse(savedIspa));
 
       const savedProfile = localStorage.getItem('byu_profile');
       if (savedProfile) setVillageProfile(JSON.parse(savedProfile));
+
+      const savedAdminUsers = localStorage.getItem('byu_admin_users');
+      if (savedAdminUsers) setAdminUsers(JSON.parse(savedAdminUsers));
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
@@ -111,8 +139,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const saveAgri = (data: AgricultureData) => { setAgriData(data); localStorage.setItem('byu_agri', JSON.stringify(data)); };
   const saveApbdes = (data: APBDesData) => { setApbdesData(data); localStorage.setItem('byu_apbdes', JSON.stringify(data)); };
   const saveWbs = (items: LaporanAntiKorupsiItem[]) => { setWbsList(items); localStorage.setItem('byu_wbs', JSON.stringify(items)); };
+  const saveIndikator = (items: IndikatorAntiKorupsiItem[]) => { setAntiKorupsiIndikatorList(items); localStorage.setItem('byu_anti_korupsi_indikator', JSON.stringify(items)); };
   const saveIspa = (items: ISPALogItem[]) => { setIspaLogs(items); localStorage.setItem('byu_ispa_logs', JSON.stringify(items)); };
   const saveProfile = (p: VillageProfile) => { setVillageProfile(p); localStorage.setItem('byu_profile', JSON.stringify(p)); };
+  const saveAdminUsers = (items: AdminUser[]) => { setAdminUsers(items); localStorage.setItem('byu_admin_users', JSON.stringify(items)); };
 
   // CRUD Handlers
   const addNews = (news: Omit<NewsItem, 'id' | 'views'>) => {
@@ -182,6 +212,24 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     saveAgri({ ...agriData, komoditas: agriData.komoditas.filter(k => k.id !== id) });
   };
 
+  const updateAgriData = (updated: Partial<AgricultureData>) => {
+    saveAgri({ ...agriData, ...updated });
+  };
+
+  const addBalaiDesaAsset = (asset: Omit<AgricultureData['logistikAset'][0], 'id'>) => {
+    const newItem = { ...asset, id: `ast-${Date.now()}` };
+    saveAgri({ ...agriData, logistikAset: [newItem, ...agriData.logistikAset] });
+  };
+
+  const updateBalaiDesaAssetStatus = (id: string, status: string) => {
+    const updated = agriData.logistikAset.map(a => a.id === id ? { ...a, status } : a);
+    saveAgri({ ...agriData, logistikAset: updated });
+  };
+
+  const deleteBalaiDesaAsset = (id: string) => {
+    saveAgri({ ...agriData, logistikAset: agriData.logistikAset.filter(a => a.id !== id) });
+  };
+
   const updateAPBDes = (updated: Partial<APBDesData>) => {
     saveApbdes({ ...apbdesData, ...updated });
   };
@@ -205,6 +253,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const deleteWBSReport = (id: string) => {
     saveWbs(wbsList.filter(w => w.id !== id));
+  };
+
+  const addAntiKorupsiIndikator = (ind: Omit<IndikatorAntiKorupsiItem, 'id'>) => {
+    const newItem: IndikatorAntiKorupsiItem = {
+      ...ind,
+      id: `ind-${Date.now()}`
+    };
+    saveIndikator([newItem, ...antiKorupsiIndikatorList]);
+  };
+
+  const updateAntiKorupsiIndikator = (id: string, updated: Partial<IndikatorAntiKorupsiItem>) => {
+    saveIndikator(antiKorupsiIndikatorList.map(i => i.id === id ? { ...i, ...updated } : i));
+  };
+
+  const deleteAntiKorupsiIndikator = (id: string) => {
+    saveIndikator(antiKorupsiIndikatorList.filter(i => i.id !== id));
   };
 
   const updateISPATindakan = (id: string, tindakan: ISPALogItem['tindakanAdmin']) => {
@@ -232,6 +296,28 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     saveProfile(updated);
   };
 
+  const addAdminUser = (user: Omit<AdminUser, 'id' | 'createdAt'>) => {
+    const newUser: AdminUser = {
+      ...user,
+      id: `usr-${Date.now()}`,
+      createdAt: new Date().toISOString().split('T')[0],
+      avatarUrl: user.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+    };
+    saveAdminUsers([...adminUsers, newUser]);
+  };
+
+  const updateAdminUser = (id: string, updated: Partial<AdminUser>) => {
+    saveAdminUsers(adminUsers.map(u => u.id === id ? { ...u, ...updated } : u));
+  };
+
+  const deleteAdminUser = (id: string) => {
+    saveAdminUsers(adminUsers.filter(u => u.id !== id));
+  };
+
+  const toggleStatusAdminUser = (id: string) => {
+    saveAdminUsers(adminUsers.map(u => u.id === id ? { ...u, status: u.status === 'Aktif' ? 'Nonaktif' : 'Aktif' } : u));
+  };
+
   return (
     <DataContext.Provider value={{
       newsList,
@@ -240,8 +326,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       agriData,
       apbdesData,
       wbsList,
+      antiKorupsiIndikatorList,
       ispaLogs,
       villageProfile,
+      adminUsers,
       addNews,
       updateNews,
       deleteNews,
@@ -255,14 +343,25 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       updateAgriKomoditas,
       addAgriKomoditas,
       deleteAgriKomoditas,
+      updateAgriData,
+      addBalaiDesaAsset,
+      updateBalaiDesaAssetStatus,
+      deleteBalaiDesaAsset,
       updateAPBDes,
       addWBSReport,
       updateWBSStatus,
       deleteWBSReport,
+      addAntiKorupsiIndikator,
+      updateAntiKorupsiIndikator,
+      deleteAntiKorupsiIndikator,
       updateISPATindakan,
       addPerangkatDesa,
       deletePerangkatDesa,
-      updateSejarahDesa
+      updateSejarahDesa,
+      addAdminUser,
+      updateAdminUser,
+      deleteAdminUser,
+      toggleStatusAdminUser
     }}>
       {children}
     </DataContext.Provider>

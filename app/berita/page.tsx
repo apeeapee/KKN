@@ -33,7 +33,7 @@ export default function BeritaPage() {
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-950 text-white p-8 sm:p-12 shadow-xl">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="bg-emerald-800/80 text-emerald-200 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/40">
-            Copywriting & Media Informasi Publik • Nabila Putri Wibowo (FISIP / Ilmu Komunikasi)
+            Portal Berita & Media Informasi Publik Desa Banyuurip
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight flex items-center gap-3">
             <Newspaper className="w-10 h-10 text-emerald-300" />

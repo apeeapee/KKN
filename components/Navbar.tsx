@@ -35,11 +35,11 @@ export default function Navbar() {
       isDropdown: true,
       subItems: [
         { href: '/kesehatan-respira', label: 'E-Book & Skrining ISPA (RESPIRA)', icon: HeartPulse, desc: 'Edukasi & Cek Mandiri Kesehatan' },
-        { href: '/pertanian-logistik', label: 'Pertanian & Logistik Panen', icon: Sprout, desc: 'Komoditas, Musim Tanam & Peta Distribusi' },
+        { href: '/pertanian-logistik', label: 'Pertanian & Peminjaman Aset Balai Desa', icon: Sprout, desc: 'Komoditas Tani, Peminjaman Aset & SOP Balai Desa' },
         { href: '/jdih-hukum', label: 'Pusat Hukum Desa (JDIH)', icon: FileText, desc: 'Perdes, Perkades & Dokumen Resmi' },
         { href: '/apbdes-pajak', label: 'Transparansi APBDes & PBB-P2', icon: PieChart, desc: 'Grafik APBDes & Bayar Pajak Online' },
         { href: '/edukasi-5s', label: 'Edukasi Budaya 5S Jepang', icon: BookOpenCheck, desc: 'Panduan Hidup Bersih & Disiplin' },
-        { href: '/umkm', label: 'Direktori UMKM & Keuangan', icon: Store, desc: 'Katalog Usaha & Pencatatan Omzet' },
+        { href: '/umkm', label: 'Direktori UMKM Desa', icon: Store, desc: 'Katalog Produk & Usaha Warga' },
       ]
     },
     { href: '/desa-anti-korupsi', label: 'Desa Anti Korupsi', icon: Scale },
@@ -52,7 +52,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all duration-300">
       {/* Top Banner */}
-      <div className="bg-emerald-950 text-white text-xs py-1.5 px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 border-b border-emerald-800">
+      <div className="bg-emerald-950 text-white text-xs py-1.5 px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 border-b border-emerald-800">
         <div className="flex items-center gap-2">
           <span className="bg-emerald-700 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase">Portal Resmi</span>
           <span>Desa Banyuurip, Kecamatan Klego, Kabupaten Boyolali</span>
@@ -68,7 +68,7 @@ export default function Navbar() {
       </div>
 
       {/* Main Navbar Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20 gap-4">
           
           {/* Logo & Brand (Left) */}
@@ -77,16 +77,15 @@ export default function Navbar() {
               <img src="/logo-boyolali.png" alt="Logo Kab. Boyolali" className="w-full h-full object-contain" />
             </div>
             <div>
-              <div className="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 group-hover:text-emerald-700 transition-colors flex items-center gap-2">
+              <div className="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 group-hover:text-emerald-700 transition-colors">
                 DESA BANYUURIP
-                <span className="text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md border border-emerald-200">Gateway</span>
               </div>
               <p className="text-[11px] text-slate-500 font-medium hidden sm:block">Digitalisasi Profil, Ekonomi & Kesehatan Satu Pintu</p>
             </div>
           </Link>
 
           {/* Desktop Navigation (Center) - Clean, Un-cluttered, Consistent */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5">
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 shrink-0">
             {navLinks.map((link) => {
               if (link.isDropdown) {
                 return (
@@ -96,8 +95,8 @@ export default function Navbar() {
                     onMouseEnter={() => setServicesDropdown(true)}
                     onMouseLeave={() => setServicesDropdown(false)}
                   >
-                    <button className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 transition-colors">
-                      {link.label}
+                    <button className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 transition-colors whitespace-nowrap shrink-0">
+                      <span>{link.label}</span>
                       <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${servicesDropdown ? 'rotate-180 text-emerald-600' : ''}`} />
                     </button>
 
@@ -135,14 +134,14 @@ export default function Navbar() {
                 <Link
                   key={link.href + link.label}
                   href={link.href}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                     active 
                       ? 'bg-emerald-700 text-white shadow-xs' 
                       : 'text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5 shrink-0" />
-                  <span>{link.label}</span>
+                  <span className="whitespace-nowrap">{link.label}</span>
                 </Link>
               );
             })}
@@ -238,7 +237,7 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
               className="block text-xs font-medium text-slate-600 hover:text-emerald-700 py-1"
             >
-              • Katalog UMKM & Keuangan Sederhana
+              • Katalog & Direktori UMKM Desa
             </Link>
           </div>
           <Link

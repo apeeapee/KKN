@@ -30,7 +30,7 @@ export default function JDIHHukumPage() {
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-950 text-white p-8 sm:p-12 shadow-xl">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="bg-blue-800/80 text-blue-200 text-xs font-bold px-3 py-1 rounded-full border border-blue-500/40">
-            Jaringan Dokumentasi & Informasi Hukum (JDIH) • Hazel Abrar (FH / Ilmu Hukum)
+            Jaringan Dokumentasi & Informasi Hukum (JDIH) Desa Banyuurip
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight flex items-center gap-3">
             <FileText className="w-10 h-10 text-blue-300" />

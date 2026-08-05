@@ -58,7 +58,74 @@ export interface UMKMItem {
   };
 }
 
+export interface AdminUser {
+  id: string;
+  username: string;
+  namaLengkap: string;
+  jabatan: string;
+  role: 'Super Admin' | 'Admin Perangkat Desa';
+  password?: string;
+  createdAt: string;
+  status: 'Aktif' | 'Nonaktif';
+  avatarUrl?: string;
+}
+
+export const mockAdminUsers: AdminUser[] = [
+  {
+    id: 'usr-1',
+    username: 'admin',
+    namaLengkap: 'Bapak Sudarno, S.Sos.',
+    jabatan: 'Kepala Desa Banyuurip',
+    role: 'Super Admin',
+    password: 'banyuurip2026',
+    createdAt: '2026-01-01',
+    status: 'Aktif',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'usr-2',
+    username: 'perangkatdesa',
+    namaLengkap: 'Ibu Sugiyanti, S.E.',
+    jabatan: 'Sekretaris Desa Banyuurip',
+    role: 'Admin Perangkat Desa',
+    password: 'banyuurip2026',
+    createdAt: '2026-01-10',
+    status: 'Aktif',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'usr-3',
+    username: 'kaurkeuangan',
+    namaLengkap: 'Bapak Joko Wahyudi',
+    jabatan: 'Kaur Keuangan Desa',
+    role: 'Admin Perangkat Desa',
+    password: 'banyuurip2026',
+    createdAt: '2026-01-15',
+    status: 'Aktif',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+  },
+  {
+    id: 'usr-4',
+    username: 'kkn_banyuurip',
+    namaLengkap: 'Tim KKN Banyuurip 2026',
+    jabatan: 'Admin Portal Media Desa',
+    role: 'Super Admin',
+    password: 'banyuurip2026',
+    createdAt: '2026-01-20',
+    status: 'Aktif',
+    avatarUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80'
+  }
+];
+
 export interface AgricultureData {
+  gambaranUmum?: string;
+  luasWilayahPertanian?: Array<{ jenisLahan: string; luas: number }>;
+  totalLuasWilayah?: number;
+  sumberDataLuas?: string;
+  komoditasUnggulanData?: Array<{ nama: string; produktivitas: string }>;
+  polaTanam?: string;
+  gapoktanInfo?: { nama: string; ketua: string; jumlahPoktan: number };
+  poktanList?: Array<{ nama: string; ketua: string; alamat: string; anggota: number }>;
   komoditas: Array<{
     id: string;
     nama: string;
@@ -78,6 +145,8 @@ export interface AgricultureData {
     kapasitas: string;
     lokasi: string;
     status: string;
+    syarat?: string;
+    penanggungJawab?: string;
   }>;
   jalurDistribusi: Array<{
     rute: string;
@@ -88,11 +157,22 @@ export interface AgricultureData {
   }>;
 }
 
+export interface APBDesPendapatan {
+  sumber: string;
+  anggaran: number;
+  realisasi: number;
+  jumlah: number;
+  persen: number;
+  porsiAnggaran: number;
+  warna: string;
+}
+
 export interface APBDesData {
   tahun: number;
   totalPendapatan: number;
+  totalRealisasiPendapatan: number;
   totalBelanja: number;
-  pendapatan: Array<{ sumber: string; jumlah: number; persen: number }>;
+  pendapatan: APBDesPendapatan[];
   belanja: Array<{ bidang: string; jumlah: number; persen: number }>;
   panduanPajakPBB: Array<{ langkah: number; judul: string; deskripsi: string }>;
 }
@@ -142,9 +222,31 @@ export interface LaporanAntiKorupsiItem {
   date: string;
 }
 
+export interface AntiKorupsiPDFFile {
+  id: string;
+  namaBerkas: string;
+  kategoriDokumen: string;
+  fileUrl: string;
+  ukuranFile?: string;
+  tglTerbit?: string;
+}
+
+export interface IndikatorAntiKorupsiItem {
+  id: string;
+  kodeIndikator: string;
+  judul: string;
+  kategori: string;
+  deskripsi: string;
+  status: 'Terpenuhi 100%' | 'Proses Verifikasi' | 'Dalam Perencanaan';
+  gdriveUrl: string;
+  tahun: number;
+  pdfFiles?: AntiKorupsiPDFFile[];
+}
+
 export interface DesaAntiKorupsiInfo {
   judul: string;
   deskripsi: string;
+  gdriveFolderUrl?: string;
   indikatorKPK: Array<{
     nomor: number;
     judul: string;
@@ -165,14 +267,28 @@ export const mockVillageProfile: VillageProfile = {
   jumlahPenduduk: 3420,
   jumlahKK: 1120,
   dusunList: ["Dusun Banyuurip I", "Dusun Banyuurip II", "Dusun Krajan", "Dusun Wonosari"],
-  sejarah: "Nama Desa Banyuurip berasal dari bahasa Jawa 'Banyu' (Air) dan 'Urip' (Kehidupan), yang bermakna 'Air Kehidupan'. Sejak zaman dahulu, sumber air dan aliran sungai di wilayah Banyuurip tidak pernah kering serta memberi penghidupan dan kesuburan bagi tanah pertanian masyarakat setempat. Masyarakat Banyuurip dikenal dengan kearifan lokal yang menjunjung tinggi kebersamaan, gotong royong, dan nilai-nilai leluhur.",
-  visi: "Mewujudkan Desa Banyuurip yang Mandiri, Sejahtera, Berbudaya, dan Terdigitalisasi Berbasis Potensi Pertanian dan Ekonomi Kerakyatan.",
+  sejarah: `Pada zaman dahulu Desa Banyuurip berupa hutan belantara dan suatu ketika datanglah seseorang dengan naik kuda yang diikuti beberapa orang. Orang tersebut bernama Pangeran Kajoran dari Kerajaan Mataram dengan beberapa prajuritnya untuk mengintai musuh (penjajah Belanda). Mereka tinggal cukup lama di wilayah Banyuurip dan agar tidak diketahui musuh, Pangeran Kajoran mengubah nama menjadi Mbah Ijo (Eyang Ijo) dan mereka menetap di wilayah Desa Banyuurip bagian utara yang sekarang dinamakan Dukuh Ngijo. Mereka dalam melaksanakan pengintaian berbaur dengan masyarakat (orang-orang sakti) yang ada di Desa Banyuurip saat itu antara lain Eyang Liyang penguasa padukuhan Ngliyangan, Eyang Jegrek penguasa di padukuhan Banyuurip, dan eyang-eyang lainnya yang kesemuanya bersatu untuk mengusir Belanda.
+
+Sepeninggal Eyang Ijo, tidak lama kemudian datang lagi seseorang pemuda yang sangat gagah berani dengan mengendarai seekor kuda dan diikuti beberapa orang prajurit, beliau adalah Sumendhi Amijaya atau yang dikenal dengan nama Eyang Sumendhi. Beliau adalah punggawa Kerajaan Mataram yang bekerja sebagai tukang hewan yang berasal dari Jatinom, Klaten untuk mencari harimau karena harimau hewan kesayangan sang Raja mati dan beliau disuruh untuk mencari gantinya.
+
+Dalam melaksanakan pencarian harimau tersebut, Sumendhi Amijaya keluar masuk hutan dan karena pihak Belanda mengetahui masih ada punggawa Mataram yang ada di sekitar wilayah Desa Banyuurip, Eyang Sumendhi Amijaya lari ke Gondanglegi dan singgah di rumah Lurah Sukiman. Eyang Sumendhi Amijaya karena masih dikejar-kejar oleh Belanda lari ke arah Timur dan bersembunyi di Kedung Bantheng wilayah Dukuh Gandhu Desa Karanggatak yakni sebuah tempat yang memiliki goa. Belanda mengetahui jika Eyang Sumendhi masuk ke gua, maka Belanda mengepung gua tersebut. Eyang Sumendhi tergesa-gesa sampai cemethi/cethen dalam Bahasa Jawa ketinggalan di rumah Lurah Sukiman dan lapak kudanya ketinggalan di Gua Kedhung Banteng. Suatu hari lapak tersebut ditemukan oleh seorang warga yang akhirnya diserahkan kepada Lurah Karanggatak saat itu. Eyang Sumendhi yang masih dikejar oleh Belanda akhirnya lari ke Timur untuk kembali lagi ke wilayah Banyuurip namun beliau tidak langsung menuju ke wilayah Banyuurip tetapi berputar-putar dengan tujuan untuk menghindari kejaran Belanda. Eyang Sumendhi karena berputar sangat jauh, pada saat istirahat bersama prajuritnya beliau bertanya kepada abdinya, "Sapa sing isih nduwe sangu?" (Siapa yang masih ada bekal?). Abdinya menjawab, "Sampun Telas Sedaya Sinuwun" (Sudah habis semua Tuan). Eyang Sumendhi kemudian berujar, "Nggejruake tekenne ono padas" (Menancapkan tongkatnya ke batu padas) dan tidak lama kemudian keluar air yang selanjutnya air tersebut diminum oleh para prajurit. Tempat tersebut kini disebut dengan nama Mur Genthong, yang berarti sebuah lubang kecil namun airnya tidak pernah habis meskipun di musim kemarau. Tempat Mur Genthong tersebut berada di sebelah utara dukuh Jlegong. Eyang Sumendhi kemudian melanjutkan perjalanan ke arah timur dan beristirahat di dukuh Jlegong. Saat itulah Eyang Sumendhi berbincang-bincang dengan para prajurit diantaranya Eyang Jegrek, Eyang Kasnawi, Mbah Gowek, Mbah Bandol Kawak, Mbah Kasnawi dan Eyang Kodim. Eyang Sumendhi Amijaya berpesan bahwa tongkat (teken) miliknya tidak dibawa pulang namun dikuburkan di tempat tersebut karena tongkat tersebut merupakan pengganti dirinya. Eyang Sumendhi berpesan untuk memperingati atau disadrani setiap Jumat Wage di bulan Safar dan dalam pelaksanaannya beliau juga berpesan untuk melarang membawa tempe kedelai namun tempe bongkrek. Pesan Eyang Sumendhi: “Ojo nggawa tempe dele ning tempe bongkrek karo sega tumpeng sak panggangge” (Jangan membawa tempe kedelai namun tempe bongkrek lengkap dengan nasi tumpeng dengan panggangnya). Beliau juga berpesan, “Lan nak ora ana dina Jumat wage ing Sasi Syafar tindakno ing dina Rebo Wage” (dan kalau tidak ada hari Jumat wage di bulan Safar laksanakan di hari Rabu Wage). Makam tersebut kini dikenal dengan nama Makam Eyang Sumendhi Amijaya yang terletak di tengah-tengah antara Dukuh Jlegong dan Dukuh Banyuurip. Pesan dari Eyang Sumendhi Amijaya hingga kini masih dilaksanakan oleh masyarakat Banyuurip, Jlegong dan sekitarnya yakni dengan melaksanakan nyadran di bulan Safar pada hari dan ketentuan sesuai pesan Eyang Sumendhi Amijaya.
+
+Eyang Sumendhi Amijaya setelah selesai melepas rasa lelah dan perbincangannya, Eyang Sumendhi Amijaya kembali ke Mataram dengan membawa delapan ekor atau empat pasang harimau dengan cara digirekake. Untuk mengenang tempat terakhir peristirahatan Eyang Sumendhi Amijaya dan tempat tongkatnya yang dikubur dibangun cungkup oleh warga Banyuurip dan sekitarnya di bawah pengawasan Lurah Sukiman Gondanglegi dan Bayan Mitro Wiyono pada saat itu. Kini makam dan cungkup tersebut telah dibangun secara permanen dan pada tahun 2001 oleh warga Dukuh Banyuurip, Jlegong dan sekitarnya diadakan pelebaran dengan cara membeli tanah di sekitarnya dengan gotong royong.
+
+Desa Banyuurip dimasa itu belum ada yang memimpin dan orang pada umumnya masih bertindak seenaknya seperti hukum rimba, siapa yang kuat dialah yang menang. Pada saat itu, Banyuurip merupakan bumi perdikan atau tanah bebas pajak dengan nama Kademangan Pangrembe Banyuurip. Pada saat itu kademangan dipimpin oleh Eyang Demang Admo Wirono dari tahun 1914 sampai dengan 1954, kemudian pada tahun 1954 dilaksanakan pemilihan lurah yang diikuti oleh Mardiharjo dan Citro Pawiro yang kemudian dimenangkan oleh Citro Pawiro. Lurah Citro Pawiro menjabat dari tahun 1954-1971. Lengsernya Lurah Citro Pawiro kemudian digantikan oleh Samsul Bahri dari tahun 1971-1980. Selepas Samsul Bahri menjabat lurah, dilaksanakan pemilihan lurah yang diikuti oleh tiga orang calon yakni Mukri Effendi, Samsul Bahri dan Bagiyo. Pemilihan ini dimenangkan oleh Samsul Bahri sehingga menjabat untuk kedua kalinya dari tahun 1980 hingga 1989.
+
+Tahun 1991 diadakan pemilihan kepala desa yang diikuti oleh Mashuri dan Sukardi, dimenangkan oleh Mashuri dan menjabat sampai tahun 1999.
+
+Tahun 1999 diadakan pemilihan kepala desa yang diikuti Mashuri, Munajad dan Kaelani, dimenangkan oleh Mashuri. Mashuri menjabat yang kedua kali sampai tahun 2007. Tahun 2007 diadakan pemilihan kepala desa yang diikuti oleh Eko Budi Hartopo, Joko Widayanto dan Mukorobin, dimenangkan oleh Mukorobin dan menjabat sampai 2013. Tahun 2013 kembali dilaksanakan pilkades dengan calon tunggal Mukorobin, menjabat sampai 2019. Tahun 2019 dilaksanakan pemilihan kepala desa dengan peserta Mukorobin, Haryanto dan Haris Sudrajat. Pemilihan ini dimenangkan oleh Haryanto dimana Haryanto adalah buyut dari Demang Atmo Wirono (Demang pertama kali Kademangan Banyuurip).
+
+Nama Banyuurip sendiri memiliki makna bahwa warga masyarakat Kelurahan Banyuurip adalah orang yang baik serta mempunyai harapan bahwa dengan nama Kelurahan Banyuurip menjadi kelurahan yang ayem tentrem, subur makmur, gemah ripah lohjinawi.`,
+  visi: "MENUJU BANYUURIP YANG TRANSPARAN, AKUNTABEL, DAN SEPENUH HATI DALAM PELAYANAN",
   misi: [
-    "Meningkatkan kualitas pelayanan publik melalui digitalisasi tata kelola desa terpadu.",
-    "Mengembangkan potensi pertanian, peternakan, dan UMKM desa berbasis teknologi modern.",
-    "Meningkatkan kualitas kesehatan dan kesejahteraan masyarakat secara berkelanjutan.",
-    "Mewujudkan keterbukaan informasi publik dan transparansi tata kelola keuangan desa.",
-    "Melestarikan budaya lokal serta membudayakan perilaku hidup bersih dan tertib di masyarakat."
+    "Mengedepankan Pelayanan dengan Kejujuran dan Musyawarah Mufakat dalam setiap kegiatan, baik dengan Aparatur Desa maupun Masyarakat Desa Banyuurip;",
+    "Meningkatkan profesionalitas dan melakukan renovasi system kerja aparatur Desa guna meningkatkan kualitas pelayanan kepada masyarakat;",
+    "Mendengar, Menampung, Menerima, dan Melaksanakan aspirasi Masyarakat untuk mewujudkan pemerintahan yang bersih, jujur, adil, dan terhindar dari segala bentuk penyelewengan;",
+    "Melaksanakan Pembangunan dengan paradigma baru, yaitu pembangunan tidak hanya di bidang sarana prasarana tetapi juga pembangunan dibidang Ekonomi, Sosial, dan Budaya, serta Kesehatan;",
+    "Mendukung penuh segala bentuk kegiatan kepemudaan baik olahraga maupun kegiatan ekonomi kreatif."
   ],
   perangkatDesa: [
     { nama: "Bapak Sriyanto", jabatan: "Kepala Desa Banyuurip", foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" },
@@ -258,7 +374,7 @@ export const mockNews: NewsItem[] = [
     category: "Masyarakat",
     summary: "Penerapan konsep Seiri, Seiton, Seiso, Seiketsu, dan Shitsuke disesuaikan dengan kehidupan sehari-hari dan lingkungan balai desa Banyuurip.",
     content: "Program edukasi budaya 5S Jepang (Ringkas, Rapi, Resik, Rawat, Rajin) resmi diperkenalkan kepada warga dan pelaku usaha di Desa Banyuurip. Konsep ini bertujuan membangun kebiasaan hidup bersih, penataan peralatan kerja yang sistematis, serta kedisiplinan lingkungan sekitar dusun.",
-    author: "Muhammad Daffa Fahreza",
+    author: "Pemdes Banyuurip",
     date: "2026-07-22",
     imageUrl: "https://images.unsplash.com/photo-1528164344705-47542687990d?auto=format&fit=crop&w=800&q=80",
     views: 215
@@ -370,39 +486,71 @@ export const mockUMKM: UMKMItem[] = [
 ];
 
 export const mockAgriculture: AgricultureData = {
+  gambaranUmum: "Desa Banyuurip adalah salah satu desa di mana sektor pertanian menjadi sumber penghasilan utama bagi warganya. Komoditas utama yang diproduksi di desa adalah padi dan jagung, dengan sistem penanamannya disesuaikan berdasarkan kondisi tanah dan musim.",
+  luasWilayahPertanian: [
+    { jenisLahan: "Lahan sawah", luas: 141.00 },
+    { jenisLahan: "Sawah irigasi setengah teknis", luas: 309.01 },
+    { jenisLahan: "Sawah tadah hujan", luas: 65.00 },
+    { jenisLahan: "Tegal/Kebun", luas: 76.00 },
+    { jenisLahan: "Pekarangan", luas: 162.22 },
+    { jenisLahan: "Lain-lain", luas: 113.38 }
+  ],
+  totalLuasWilayah: 450.01,
+  sumberDataLuas: "BPP Kecamatan Klego",
+  komoditasUnggulanData: [
+    { nama: "Padi", produktivitas: "6,2 ton/ha" },
+    { nama: "Jagung Hibrida", produktivitas: "4,5 ton/ha" }
+  ],
+  polaTanam: "Padi ➔ Padi ➔ Jagung / Kacang Tanah",
+  gapoktanInfo: {
+    nama: "Subur Makmur",
+    ketua: "Bapak Darji",
+    jumlahPoktan: 9
+  },
+  poktanList: [
+    { nama: "Sidomukti I", ketua: "Sukardi", alamat: "Tlogosari RT22 RW06", anggota: 85 },
+    { nama: "Sidomukti II", ketua: "Purwanto", alamat: "Banyuurip RT16 RW05", anggota: 43 },
+    { nama: "Sidomuncul I", ketua: "Muadif", alamat: "Ngijo RT04 RW01", anggota: 50 },
+    { nama: "Sidomuncul II", ketua: "Shodiq", alamat: "Ngijo RT03 RW01", anggota: 60 },
+    { nama: "Harapan I", ketua: "Basuki", alamat: "Banyuurip RT14 RW01", anggota: 47 },
+    { nama: "Harapan II", ketua: "Muh Thoha", alamat: "Palemrejo RT09 RW02", anggota: 60 },
+    { nama: "Ngudi Rejeki I", ketua: "Supadi", alamat: "Ngeliyangan RT24 RW07", anggota: 26 },
+    { nama: "Ngudi Rejeki II", ketua: "Juwadi", alamat: "Jlegong RT11 RW03", anggota: 82 },
+    { nama: "Ngudi Rejeki III", ketua: "Jumanto", alamat: "Ngeliyangan RT27 RW07", anggota: 54 }
+  ],
   komoditas: [
     {
       id: "agr-1",
       nama: "Padi IR-64 & Inpari 32",
       kategori: "Tanaman Pangan",
-      luasLahan: 145.5,
-      estimasiHasil: "870 Ton / Musim Panen",
+      luasLahan: 141.0,
+      estimasiHasil: "6,2 ton/ha (Panen Raya MT 1 & MT 2)",
       musimTanam: "November - Februari (MT 1), Maret - Juni (MT 2)",
-      musimPanen: "Maret & Juli",
-      kelompokTani: "Poktan Tani Makmur I & II",
-      lokasi: "Sawah Blok Krajan & Wonosari"
+      musimPanen: "Maret & Juli (Panen Padi)",
+      kelompokTani: "Gapoktan Subur Makmur (9 Poktan)",
+      lokasi: "Sawah Irigasi & Tadah Hujan Banyuurip"
     },
     {
       id: "agr-2",
       nama: "Jagung Hibrida",
       kategori: "Tanaman Pangan",
-      luasLahan: 62.0,
-      estimasiHasil: "310 Ton / Musim",
-      musimTanam: "July - Oktober (MT 3)",
+      luasLahan: 76.0,
+      estimasiHasil: "4,5 ton/ha (MT 3 Kemarau)",
+      musimTanam: "Juli - Oktober (MT 3 Kemarau)",
       musimPanen: "Oktober - November",
-      kelompokTani: "Poktan Sumber Rejeki",
-      lokasi: "Lahan Tegal Banyuurip II"
+      kelompokTani: "Gapoktan Subur Makmur",
+      lokasi: "Lahan Tegal & Kebun Desa Banyuurip"
     },
     {
       id: "agr-3",
-      nama: "Cabai Merah Keriting",
-      kategori: "Hortikultura",
-      luasLahan: 28.0,
-      estimasiHasil: "140 Ton / Tahun",
-      musimTanam: "April - Mei",
-      musimPanen: "Agustus - Oktober (Panen Berkala)",
-      kelompokTani: "Gapoktan Banyuurip Sejahtera",
-      lokasi: "Lahan Hortikultura Wonosari"
+      nama: "Kacang Tanah & Hortikultura",
+      kategori: "Palawija",
+      luasLahan: 65.0,
+      estimasiHasil: "2,8 ton/ha",
+      musimTanam: "Agustus - November",
+      musimPanen: "November (Akhir Kemarau)",
+      kelompokTani: "Poktan Sidomukti & Harapan",
+      lokasi: "Lahan Tegal & Sawah Tadah Hujan"
     },
     {
       id: "agr-4",
@@ -420,27 +568,73 @@ export const mockAgriculture: AgricultureData = {
   logistikAset: [
     {
       id: "ast-1",
-      namaAset: "Gudang Penyimpanan Padi & Rice Milling Unit (RMU)",
-      kategori: "Gudang & Pengolahan",
-      kapasitas: "150 Ton Padi Kering",
-      lokasi: "Balai Desa / Sentra Logistik Banyuurip",
-      status: "Beroperasi Aktif"
+      namaAset: "Tenda Acara & Panggung Portable Balai Desa",
+      kategori: "Peralatan Acara & Hajatan",
+      kapasitas: "4 Unit Tenda (6x12m) & Panggung (4x6m)",
+      lokasi: "Gudang Balai Desa Banyuurip",
+      status: "Tersedia",
+      syarat: "KTP Warga Banyuurip & Surat Permohonan H-3 ke Kaur Umum",
+      penanggungJawab: "Pak Bambang (Kaur Umum - 0812-3456-7890)"
     },
     {
       id: "ast-2",
-      namaAset: "Lumbung Pangan Poktan Tani Makmur",
-      kategori: "Lumbung Cadangan",
-      kapasitas: "50 Ton Cadangan Pangan Desa",
-      lokasi: "Dusun Krajan",
-      status: "Beroperasi Aktif"
+      namaAset: "Sound System Portable Wireless & 4 Microphone",
+      kategori: "Peralatan Acara & Hajatan",
+      kapasitas: "2 Set Active Speaker 15 Inch + Mic Wireless",
+      lokasi: "Ruang Inventaris Balai Desa",
+      status: "Tersedia",
+      syarat: "Borang Peminjaman + Menjaga Kebersihan & Keamanan Alat",
+      penanggungJawab: "Pak Bambang (Kaur Umum - 0812-3456-7890)"
     },
     {
       id: "ast-3",
-      namaAset: "Kandang Komunal & Unit Pengolahan Pupuk Organik (UPPO)",
-      kategori: "Peternakan & Pupuk",
-      kapasitas: "200 Ekor Sapi & Produksi Pupuk 5 Ton/Bulan",
-      lokasi: "Dusun Banyuurip II",
-      status: "Beroperasi Aktif"
+      namaAset: "Hand Tractor Quick G1000 Kubota (Alsintan)",
+      kategori: "Alat Pertanian Komunal",
+      kapasitas: "2 Unit Hand Tractor Siap Pakai",
+      lokasi: "Sentra Agribisnis Balai Desa",
+      status: "Tersedia",
+      syarat: "Anggota Poktan / Warga Petani Desa Banyuurip",
+      penanggungJawab: "Mbah Wagiman (Ketua Poktan Tani Makmur)"
+    },
+    {
+      id: "ast-4",
+      namaAset: "Mesin Pompa Air Irigasi Sawah 3 Inci (Honda)",
+      kategori: "Alat Pertanian Komunal",
+      kapasitas: "3 Unit Mesin Pompa Air High Pressure",
+      lokasi: "Gudang Poktan Wonosari",
+      status: "Sedang Dipinjam",
+      syarat: "Maksimal Peminjaman 3 Hari per Sesi Pengairan Sawah",
+      penanggungJawab: "Pak Hartono (Kaur Pembangunan)"
+    },
+    {
+      id: "ast-5",
+      namaAset: "Genset Silent Balai Desa 5000 Watt",
+      kategori: "Mesin & Konstruksi",
+      kapasitas: "1 Unit Genset Silent 5.5 kVA",
+      lokasi: "Balai Desa Banyuurip",
+      status: "Tersedia",
+      syarat: "Peminjaman Acara Warga / Keadaan Darurat Listrik",
+      penanggungJawab: "Pak Bambang (Kaur Umum)"
+    },
+    {
+      id: "ast-6",
+      namaAset: "Molen Cor Beton Portable (Engine 350L)",
+      kategori: "Mesin & Konstruksi",
+      kapasitas: "1 Unit Molen Pengaduk Semen",
+      lokasi: "Halaman Belakang Balai Desa",
+      status: "Tersedia",
+      syarat: "Permohonan Kerja Bakti Dusun / Pembangunan Fasilitas Umum",
+      penanggungJawab: "Pak Hartono (Kaur Pembangunan)"
+    },
+    {
+      id: "ast-7",
+      namaAset: "Kursi Lipat Stainless Acara Warga (100 Unit)",
+      kategori: "Peralatan Acara & Hajatan",
+      kapasitas: "100 Unit Kursi Lipat Chitose",
+      lokasi: "Gudang Balai Desa",
+      status: "Tersedia",
+      syarat: "Pengembalian Tepat Waktu & Kondisi Utuh",
+      penanggungJawab: "Pak Bambang (Kaur Umum)"
     }
   ],
   jalurDistribusi: [
@@ -470,14 +664,55 @@ export const mockAgriculture: AgricultureData = {
 
 export const mockAPBDes: APBDesData = {
   tahun: 2026,
-  totalPendapatan: 1845000000,
-  totalBelanja: 1812000000,
+  totalPendapatan: 1590000000,
+  totalRealisasiPendapatan: 1413000000,
+  totalBelanja: 1550000000,
   pendapatan: [
-    { sumber: "Dana Desa (APBN)", jumlah: 980000000, persen: 53.1 },
-    { sumber: "Alokasi Dana Desa (ADD Boyolali)", jumlah: 540000000, persen: 29.3 },
-    { sumber: "Bagi Hasil Pajak & Retribusi", jumlah: 125000000, persen: 6.8 },
-    { sumber: "Pendapatan Asli Desa (PADes)", jumlah: 110000000, persen: 6.0 },
-    { sumber: "Bantuan Keuangan Provinsi/Kabupaten", jumlah: 90000000, persen: 4.8 }
+    { 
+      sumber: "Dana Desa (DD)", 
+      anggaran: 750000000, 
+      realisasi: 675000000, 
+      jumlah: 750000000, 
+      persen: 90.0, 
+      porsiAnggaran: 47.17, 
+      warna: "#10b981" 
+    },
+    { 
+      sumber: "Alokasi Dana Desa (ADD)", 
+      anggaran: 450000000, 
+      realisasi: 405000000, 
+      jumlah: 450000000, 
+      persen: 90.0, 
+      porsiAnggaran: 28.30, 
+      warna: "#3b82f6" 
+    },
+    { 
+      sumber: "Pajak Bagi Hasil", 
+      anggaran: 150000000, 
+      realisasi: 135000000, 
+      jumlah: 150000000, 
+      persen: 90.0, 
+      porsiAnggaran: 9.43, 
+      warna: "#8b5cf6" 
+    },
+    { 
+      sumber: "Pendapatan Asli Desa (PADes)", 
+      anggaran: 120000000, 
+      realisasi: 102000000, 
+      jumlah: 120000000, 
+      persen: 85.0, 
+      porsiAnggaran: 7.55, 
+      warna: "#f59e0b" 
+    },
+    { 
+      sumber: "Bantuan Keuangan", 
+      anggaran: 120000000, 
+      realisasi: 96000000, 
+      jumlah: 120000000, 
+      persen: 80.0, 
+      porsiAnggaran: 7.55, 
+      warna: "#ec4899" 
+    }
   ],
   belanja: [
     { bidang: "Penyelenggaraan Pemerintahan Desa", jumlah: 580000000, persen: 32.0 },
@@ -597,6 +832,7 @@ export const mockISPAInfo: ISPAArticle = {
 export const mockDesaAntiKorupsiInfo: DesaAntiKorupsiInfo = {
   judul: "Desa Banyuurip Bebas Korupsi & Berintegritas",
   deskripsi: "Komitmen penuh Pemerintah Desa Banyuurip dalam memenuhi 5 Indikator Program Desa Anti Korupsi Komisi Pemberantasan Korupsi (KPK) untuk mewujudkan tata kelola pemerintahan yang jujur, terbuka, dan bertanggung jawab.",
+  gdriveFolderUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
   indikatorKPK: [
     {
       nomor: 1,
@@ -683,6 +919,369 @@ export const mockAntiKorupsiLaporan: LaporanAntiKorupsiItem[] = [
     kontakPelapor: "0812-9988-7711",
     status: "Selesai",
     date: "2026-07-20"
+  }
+];
+
+export const mockAntiKorupsiIndikator: IndikatorAntiKorupsiItem[] = [
+  {
+    id: "ind-1",
+    kodeIndikator: "IND-01",
+    judul: "1. Kebijakan Desa tentang Perencanaan, Pelaksanaan, penatausahaan dan pertanggungjawaban APBDes",
+    kategori: "Penataan Tatalaksana",
+    deskripsi: "Peraturan Desa, SK penetapan, dan dokumen tata kelola APBDes Desa Banyuurip yang akuntabel dan transparan.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-1-1",
+        namaBerkas: "Perdes_Perencanaan_dan_Pertanggungjawaban_APBDes_2025.pdf",
+        kategoriDokumen: "Peraturan Desa",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "2.4 MB",
+        tglTerbit: "2025-12-30"
+      }
+    ]
+  },
+  {
+    id: "ind-2",
+    kodeIndikator: "IND-02",
+    judul: "2. Kebijakan desa mengenai mekanisme Pengawasan dan Evaluasi Kinerja Perangkat desa",
+    kategori: "Penataan Tatalaksana",
+    deskripsi: "SOP dan regulasi mekanisme pengawasan internal serta evaluasi capaian kinerja perangkat desa secara berkala.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-2-1",
+        namaBerkas: "Regulasi_Mekanisme_Pengawasan_Kinerja_Perangkat_Desa.pdf",
+        kategoriDokumen: "SOP Pengawasan",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "1.8 MB",
+        tglTerbit: "2025-06-15"
+      }
+    ]
+  },
+  {
+    id: "ind-3",
+    kodeIndikator: "IND-03",
+    judul: "3. Kebijakan desa tentang pengendalian gratifikasi, suap, dan konflik kepentingan",
+    kategori: "Penataan Tatalaksana",
+    deskripsi: "Peraturan desa dan surat komitmen bersama pengendalian gratifikasi, larangan suap, serta penanganan konflik kepentingan.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-3-1",
+        namaBerkas: "Peraturan_Desa_Pengendalian_Gratifikasi_dan_Suap.pdf",
+        kategoriDokumen: "Peraturan Desa",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "1.5 MB",
+        tglTerbit: "2025-04-10"
+      }
+    ]
+  },
+  {
+    id: "ind-4",
+    kodeIndikator: "IND-04",
+    judul: "4. Keberadaan perjanjian kerjasama antara pelaksana kegiatan anggaran dengan pihak penyedia, dan telah melalui proses pengadaan barang-jasa di Desa",
+    kategori: "Penataan Tatalaksana",
+    deskripsi: "Dokumen kontrak kerja sama (SPK) pengadaan barang dan jasa desa yang dilaksanakan secara jujur dan transparan.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-4-1",
+        namaBerkas: "Dokumen_Perjanjian_Kerjasama_Pengadaan_Barang_Jasa.pdf",
+        kategoriDokumen: "Kontrak Kerja",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "3.1 MB",
+        tglTerbit: "2025-08-20"
+      }
+    ]
+  },
+  {
+    id: "ind-5",
+    kodeIndikator: "IND-05",
+    judul: "5. Kebijakan desa tentang pakta integritas dan sejenisnya",
+    kategori: "Penataan Tatalaksana",
+    deskripsi: "Dokumen Pakta Integritas yang ditandatangani oleh Kepala Desa dan seluruh Perangkat Desa Banyuurip.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-5-1",
+        namaBerkas: "Dokumen_Pakta_Integritas_Perangkat_Desa.pdf",
+        kategoriDokumen: "Pakta Integritas",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "1.6 MB",
+        tglTerbit: "2025-01-05"
+      }
+    ]
+  },
+  {
+    id: "ind-6",
+    kodeIndikator: "IND-06",
+    judul: "6. Keberadaan kegiatan pengawasan dan evaluasi kinerja perangkat desa",
+    kategori: "Pengawasan",
+    deskripsi: "Dokumentasi dan risalah rapat evaluasi kinerja tahunan Perangkat Desa oleh Kepala Desa dan BPD.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-6-1",
+        namaBerkas: "Laporan_Kegiatan_Pengawasan_dan_Evaluasi_Kinerja.pdf",
+        kategoriDokumen: "Laporan Pengawasan",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "2.0 MB",
+        tglTerbit: "2025-11-15"
+      }
+    ]
+  },
+  {
+    id: "ind-7",
+    kodeIndikator: "IND-07",
+    judul: "7. Keberadaan tindak lanjut hasil pembinaan, petunjuk, arahan, pengawasan dan pemeriksaan dari pemerintah pusat-daerah",
+    kategori: "Pengawasan",
+    deskripsi: "Laporan tindak lanjut (LHP) atas rekomendasi pembinaan dan pemeriksaan Inspektorat Daerah/Kementerian.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-7-1",
+        namaBerkas: "Dokumen_Tindak_Lanjut_Hasil_Pemeriksaan_Inspektorat.pdf",
+        kategoriDokumen: "Laporan Audit",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "2.2 MB",
+        tglTerbit: "2025-10-05"
+      }
+    ]
+  },
+  {
+    id: "ind-8",
+    kodeIndikator: "IND-08",
+    judul: "8. Tidak ada aparatur desa dalam 3 tahun terakhir yang terjerat tindak pidana korupsi",
+    kategori: "Pengawasan",
+    deskripsi: "Surat keterangan dan rekam jejak bersih integritas aparatur Pemdes Banyuurip dari kasus pidana korupsi.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-8-1",
+        namaBerkas: "Surat_Keterangan_Bebas_Pidana_Korupsi_Aparatur_Desa.pdf",
+        kategoriDokumen: "Surat Keterangan",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "1.1 MB",
+        tglTerbit: "2025-12-01"
+      }
+    ]
+  },
+  {
+    id: "ind-9",
+    kodeIndikator: "IND-09",
+    judul: "9. Keberadaan layanan pengaduan bagi masyarakat",
+    kategori: "Pengawasan",
+    deskripsi: "Kanal Whistleblowing System (WBS) dan kotak pengaduan rahasia warga di kantor desa dan website digital.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-9-1",
+        namaBerkas: "Pedoman_Operasional_Layanan_Pengaduan_WBS_Masyarakat.pdf",
+        kategoriDokumen: "SOP Pengaduan",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "1.4 MB",
+        tglTerbit: "2025-03-01"
+      }
+    ]
+  },
+  {
+    id: "ind-10",
+    kodeIndikator: "IND-10",
+    judul: "10. Keberadaan survei kepuasan masyarakat terhadap layanan pemerintah desa",
+    kategori: "Pelayanan Publik",
+    deskripsi: "Laporan dan analisis Indeks Kepuasan Masyarakat (IKM) terhadap mutu pelayanan administrasi desa.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-10-1",
+        namaBerkas: "Laporan_Hasil_Survei_Kepuasan_Masyarakat_2025.pdf",
+        kategoriDokumen: "Survei Kepuasan",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "2.3 MB",
+        tglTerbit: "2025-11-28"
+      }
+    ]
+  },
+  {
+    id: "ind-11",
+    kodeIndikator: "IND-11",
+    judul: "11. Keterbukaan dan akses masyarakat desa terhadap informasi standar pelayanan minimal (kesehatan, pendidikan, sosial, lingkungan, tramtibumlinmas, pekerjaan umum), pembangunan, kependudukan, keuangan, dan pelayanan lainnya",
+    kategori: "Pelayanan Publik",
+    deskripsi: "Papan informasi dan portal publik Standar Pelayanan Minimal (SPM) bidang kependudukan, sosial, dan infrastruktur.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-11-1",
+        namaBerkas: "Standar_Pelayanan_Minimal_SPM_Desa_Banyuurip.pdf",
+        kategoriDokumen: "Standar Pelayanan",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "2.7 MB",
+        tglTerbit: "2025-05-10"
+      }
+    ]
+  },
+  {
+    id: "ind-12",
+    kodeIndikator: "IND-12",
+    judul: "12. Keberadaan media informasi tentang APBDes di Balai Desa dan atau tempat lain yang mudah diakses oleh masyarakat",
+    kategori: "Pelayanan Publik",
+    deskripsi: "Baliho APBDes, infografis keuangan di Balai Desa, media sosial, dan website resmi Desa Banyuurip.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-12-1",
+        namaBerkas: "Dokumentasi_Media_Informasi_Publikasi_APBDes.pdf",
+        kategoriDokumen: "Media Publikasi",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "3.5 MB",
+        tglTerbit: "2025-02-20"
+      }
+    ]
+  },
+  {
+    id: "ind-13",
+    kodeIndikator: "IND-13",
+    judul: "13. Keberadaan Maklumat Pelayanan",
+    kategori: "Pelayanan Publik",
+    deskripsi: "Maklumat Pelayanan Publik yang terpasang resmi di area pelayanan Balai Desa Banyuurip.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-13-1",
+        namaBerkas: "Dokumen_Maklumat_Pelayanan_Bebas_Pungli.pdf",
+        kategoriDokumen: "Maklumat Pelayanan",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "1.2 MB",
+        tglTerbit: "2025-01-15"
+      }
+    ]
+  },
+  {
+    id: "ind-14",
+    kodeIndikator: "IND-14",
+    judul: "14. Partisipasi dan keterlibatan masyarakat dalam penyusunan RKP Desa",
+    kategori: "Partisipasi Masyarakat",
+    deskripsi: "Daftar hadir, notulensi, dan berita acara pelibatan warga dalam Musrenbangdes RKP Desa.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-14-1",
+        namaBerkas: "Berita_Acara_Partisipasi_Masyarakat_Penyusunan_RKPDesa.pdf",
+        kategoriDokumen: "Musrenbangdes",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "2.9 MB",
+        tglTerbit: "2025-09-12"
+      }
+    ]
+  },
+  {
+    id: "ind-15",
+    kodeIndikator: "IND-15",
+    judul: "15. Kesadaran masyarakat dalam mencegah terjadinya praktik gratifikasi, suap dan konflik kepentingan",
+    kategori: "Partisipasi Masyarakat",
+    deskripsi: "Sosialisasi penolakan suap/pungli dan tingkat kesadaran warga dalam mengawal tata kelola desa yang bersih.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-15-1",
+        namaBerkas: "Laporan_Sosialisasi_Kesadaran_Masyarakat_Anti_Gratifikasi.pdf",
+        kategoriDokumen: "Sosialisasi Anti Korupsi",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "1.9 MB",
+        tglTerbit: "2025-07-22"
+      }
+    ]
+  },
+  {
+    id: "ind-16",
+    kodeIndikator: "IND-16",
+    judul: "16. Keterlibatan Lembaga Kemasyarakatan Desa dan masyarakat dalam pelaksanaan pembangunan desa",
+    kategori: "Partisipasi Masyarakat",
+    deskripsi: "Dokumentasi gotong royong dan partisipasi LKMD, PKK, Karang Taruna, dan Poktan dalam proyek pembangunan.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-16-1",
+        namaBerkas: "Dokumen_Keterlibatan_LKD_dalam_Pembangunan_Desa.pdf",
+        kategoriDokumen: "Partisipasi Pembangunan",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "3.2 MB",
+        tglTerbit: "2025-10-18"
+      }
+    ]
+  },
+  {
+    id: "ind-17",
+    kodeIndikator: "IND-17",
+    judul: "17. Budaya lokal-hukum adat yang mendorong upaya pencegahan tindak pidana korupsi",
+    kategori: "Kearifan Lokal",
+    deskripsi: "Penanaman kearifan lokal kejujuran 'Banyuurip' dan nilai-nilai moral dalam kehidupan bermasyarakat.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-17-1",
+        namaBerkas: "Dokumentasi_Budaya_Lokal_Pencegahan_Korupsi.pdf",
+        kategoriDokumen: "Kearifan Lokal",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "1.7 MB",
+        tglTerbit: "2025-04-05"
+      }
+    ]
+  },
+  {
+    id: "ind-18",
+    kodeIndikator: "IND-18",
+    judul: "18. Tokoh masyarakat, tokoh agama, tokoh adat, tokoh pemuda dan kaum perempuan yang mendorong upaya pencegahan tindak pidana korupsi",
+    kategori: "Kearifan Lokal",
+    deskripsi: "Peran aktif tokoh agama, pemuda, dan kelompok perempuan dalam mengampanyekan gerakan desa bebas korupsi.",
+    status: "Terpenuhi 100%",
+    gdriveUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+    tahun: 2025,
+    pdfFiles: [
+      {
+        id: "pdf-18-1",
+        namaBerkas: "Peran_Tokoh_Masyarakat_dan_Perempuan_Anti_Korupsi.pdf",
+        kategoriDokumen: "Peran Tokoh Warga",
+        fileUrl: "https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2",
+        ukuranFile: "2.1 MB",
+        tglTerbit: "2025-05-30"
+      }
+    ]
   }
 ];
 

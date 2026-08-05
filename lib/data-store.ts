@@ -60,7 +60,27 @@ export interface UMKMItem {
   };
 }
 
+export interface AdminUser {
+  id: string;
+  username: string;
+  namaLengkap: string;
+  jabatan: string;
+  role: 'Super Admin' | 'Admin Perangkat Desa';
+  password?: string;
+  createdAt: string;
+  status: 'Aktif' | 'Nonaktif';
+  avatarUrl?: string;
+}
+
 export interface AgricultureData {
+  gambaranUmum?: string;
+  luasWilayahPertanian?: Array<{ jenisLahan: string; luas: number }>;
+  totalLuasWilayah?: number;
+  sumberDataLuas?: string;
+  komoditasUnggulanData?: Array<{ nama: string; produktivitas: string }>;
+  polaTanam?: string;
+  gapoktanInfo?: { nama: string; ketua: string; jumlahPoktan: number };
+  poktanList?: Array<{ nama: string; ketua: string; alamat: string; anggota: number }>;
   komoditas: Array<{
     id: string;
     nama: string;
@@ -80,6 +100,8 @@ export interface AgricultureData {
     kapasitas: string;
     lokasi: string;
     status: string;
+    syarat?: string;
+    penanggungJawab?: string;
   }>;
   jalurDistribusi: Array<{
     rute: string;
@@ -90,11 +112,22 @@ export interface AgricultureData {
   }>;
 }
 
+export interface APBDesPendapatan {
+  sumber: string;
+  anggaran: number;
+  realisasi: number;
+  jumlah: number;
+  persen: number;
+  porsiAnggaran: number;
+  warna: string;
+}
+
 export interface APBDesData {
   tahun: number;
   totalPendapatan: number;
+  totalRealisasiPendapatan: number;
   totalBelanja: number;
-  pendapatan: Array<{ sumber: string; jumlah: number; persen: number }>;
+  pendapatan: APBDesPendapatan[];
   belanja: Array<{ bidang: string; jumlah: number; persen: number }>;
   panduanPajakPBB: Array<{ langkah: number; judul: string; deskripsi: string }>;
 }
@@ -132,14 +165,28 @@ export const mockVillageProfile: VillageProfile = {
   jumlahPenduduk: 3840,
   jumlahKK: 1120,
   dusunList: ["Dusun Banyuurip I", "Dusun Banyuurip II", "Dusun Krajan", "Dusun Wonosari"],
-  sejarah: "Nama Desa Banyuurip berasal dari bahasa Jawa 'Banyu' (Air) dan 'Urip' (Kehidupan), yang bermakna 'Air Kehidupan'. Sejak zaman dahulu, sumber air dan aliran sungai di wilayah Banyuurip tidak pernah kering serta memberi penghidupan dan kesuburan bagi tanah pertanian masyarakat setempat. Masyarakat Banyuurip dikenal dengan kearifan lokal yang menjunjung tinggi kebersamaan, gotong royong, dan nilai-nilai leluhur.",
-  visi: "Mewujudkan Desa Banyuurip yang Mandiri, Sejahtera, Berbudaya, dan Terdigitalisasi Berbasis Potensi Pertanian dan Ekonomi Kerakyatan.",
+  sejarah: `Pada zaman dahulu Desa Banyuurip berupa hutan belantara dan suatu ketika datanglah seseorang dengan naik kuda yang diikuti beberapa orang. Orang tersebut bernama Pangeran Kajoran dari Kerajaan Mataram dengan beberapa prajuritnya untuk mengintai musuh (penjajah Belanda). Mereka tinggal cukup lama di wilayah Banyuurip dan agar tidak diketahui musuh, Pangeran Kajoran mengubah nama menjadi Mbah Ijo (Eyang Ijo) dan mereka menetap di wilayah Desa Banyuurip bagian utara yang sekarang dinamakan Dukuh Ngijo. Mereka dalam melaksanakan pengintaian berbaur dengan masyarakat (orang-orang sakti) yang ada di Desa Banyuurip saat itu antara lain Eyang Liyang penguasa padukuhan Ngliyangan, Eyang Jegrek penguasa di padukuhan Banyuurip, dan eyang-eyang lainnya yang kesemuanya bersatu untuk mengusir Belanda.
+
+Sepeninggal Eyang Ijo, tidak lama kemudian datang lagi seseorang pemuda yang sangat gagah berani dengan mengendarai seekor kuda dan diikuti beberapa orang prajurit, beliau adalah Sumendhi Amijaya atau yang dikenal dengan nama Eyang Sumendhi. Beliau adalah punggawa Kerajaan Mataram yang bekerja sebagai tukang hewan yang berasal dari Jatinom, Klaten untuk mencari harimau karena harimau hewan kesayangan sang Raja mati dan beliau disuruh untuk mencari gantinya.
+
+Dalam melaksanakan pencarian harimau tersebut, Sumendhi Amijaya keluar masuk hutan dan karena pihak Belanda mengetahui masih ada punggawa Mataram yang ada di sekitar wilayah Desa Banyuurip, Eyang Sumendhi Amijaya lari ke Gondanglegi dan singgah di rumah Lurah Sukiman. Eyang Sumendhi Amijaya karena masih dikejar-kejar oleh Belanda lari ke arah Timur dan bersembunyi di Kedung Bantheng wilayah Dukuh Gandhu Desa Karanggatak yakni sebuah tempat yang memiliki goa. Belanda mengetahui jika Eyang Sumendhi masuk ke gua, maka Belanda mengepung gua tersebut. Eyang Sumendhi tergesa-gesa sampai cemethi/cethen dalam Bahasa Jawa ketinggalan di rumah Lurah Sukiman dan lapak kudanya ketinggalan di Gua Kedhung Banteng. Suatu hari lapak tersebut ditemukan oleh seorang warga yang akhirnya diserahkan kepada Lurah Karanggatak saat itu. Eyang Sumendhi yang masih dikejar oleh Belanda akhirnya lari ke Timur untuk kembali lagi ke wilayah Banyuurip namun beliau tidak langsung menuju ke wilayah Banyuurip tetapi berputar-putar dengan tujuan untuk menghindari kejaran Belanda. Eyang Sumendhi karena berputar sangat jauh, pada saat istirahat bersama prajuritnya beliau bertanya kepada abdinya, "Sapa sing isih nduwe sangu?" (Siapa yang masih ada bekal?). Abdinya menjawab, "Sampun Telas Sedaya Sinuwun" (Sudah habis semua Tuan). Eyang Sumendhi kemudian berujar, "Nggejruake tekenne ono padas" (Menancapkan tongkatnya ke batu padas) dan tidak lama kemudian keluar air yang selanjutnya air tersebut diminum oleh para prajurit. Tempat tersebut kini disebut dengan nama Mur Genthong, yang berarti sebuah lubang kecil namun airnya tidak pernah habis meskipun di musim kemarau. Tempat Mur Genthong tersebut berada di sebelah utara dukuh Jlegong. Eyang Sumendhi kemudian melanjutkan perjalanan ke arah timur dan beristirahat di dukuh Jlegong. Saat itulah Eyang Sumendhi berbincang-bincang dengan para prajurit diantaranya Eyang Jegrek, Eyang Kasnawi, Mbah Gowek, Mbah Bandol Kawak, Mbah Kasnawi dan Eyang Kodim. Eyang Sumendhi Amijaya berpesan bahwa tongkat (teken) miliknya tidak dibawa pulang namun dikuburkan di tempat tersebut karena tongkat tersebut merupakan pengganti dirinya. Eyang Sumendhi berpesan untuk memperingati atau disadrani setiap Jumat Wage di bulan Safar dan dalam pelaksanaannya beliau juga berpesan untuk melarang membawa tempe kedelai namun tempe bongkrek. Pesan Eyang Sumendhi: “Ojo nggawa tempe dele ning tempe bongkrek karo sega tumpeng sak panggangge” (Jangan membawa tempe kedelai namun tempe bongkrek lengkap dengan nasi tumpeng dengan panggangnya). Beliau juga berpesan, “Lan nak ora ana dina Jumat wage ing Sasi Syafar tindakno ing dina Rebo Wage” (dan kalau tidak ada hari Jumat wage di bulan Safar laksanakan di hari Rabu Wage). Makam tersebut kini dikenal dengan nama Makam Eyang Sumendhi Amijaya yang terletak di tengah-tengah antara Dukuh Jlegong dan Dukuh Banyuurip. Pesan dari Eyang Sumendhi Amijaya hingga kini masih dilaksanakan oleh masyarakat Banyuurip, Jlegong dan sekitarnya yakni dengan melaksanakan nyadran di bulan Safar pada hari dan ketentuan sesuai pesan Eyang Sumendhi Amijaya.
+
+Eyang Sumendhi Amijaya setelah selesai melepas rasa lelah dan perbincangannya, Eyang Sumendhi Amijaya kembali ke Mataram dengan membawa delapan ekor atau empat pasang harimau dengan cara digirekake. Untuk mengenang tempat terakhir peristirahatan Eyang Sumendhi Amijaya dan tempat tongkatnya yang dikubur dibangun cungkup oleh warga Banyuurip dan sekitarnya di bawah pengawasan Lurah Sukiman Gondanglegi dan Bayan Mitro Wiyono pada saat itu. Kini makam dan cungkup tersebut telah dibangun secara permanen dan pada tahun 2001 oleh warga Dukuh Banyuurip, Jlegong dan sekitarnya diadakan pelebaran dengan cara membeli tanah di sekitarnya dengan gotong royong.
+
+Desa Banyuurip dimasa itu belum ada yang memimpin dan orang pada umumnya masih bertindak seenaknya seperti hukum rimba, siapa yang kuat dialah yang menang. Pada saat itu, Banyuurip merupakan bumi perdikan atau tanah bebas pajak dengan nama Kademangan Pangrembe Banyuurip. Pada saat itu kademangan dipimpin oleh Eyang Demang Admo Wirono dari tahun 1914 sampai dengan 1954, kemudian pada tahun 1954 dilaksanakan pemilihan lurah yang diikuti oleh Mardiharjo dan Citro Pawiro yang kemudian dimenangkan oleh Citro Pawiro. Lurah Citro Pawiro menjabat dari tahun 1954-1971. Lengsernya Lurah Citro Pawiro kemudian digantikan oleh Samsul Bahri dari tahun 1971-1980. Selepas Samsul Bahri menjabat lurah, dilaksanakan pemilihan lurah yang diikuti oleh tiga orang calon yakni Mukri Effendi, Samsul Bahri dan Bagiyo. Pemilihan ini dimenangkan oleh Samsul Bahri sehingga menjabat untuk kedua kalinya dari tahun 1980 hingga 1989.
+
+Tahun 1991 diadakan pemilihan kepala desa yang diikuti oleh Mashuri dan Sukardi, dimenangkan oleh Mashuri dan menjabat sampai tahun 1999.
+
+Tahun 1999 diadakan pemilihan kepala desa yang diikuti Mashuri, Munajad dan Kaelani, dimenangkan oleh Mashuri. Mashuri menjabat yang kedua kali sampai tahun 2007. Tahun 2007 diadakan pemilihan kepala desa yang diikuti oleh Eko Budi Hartopo, Joko Widayanto dan Mukorobin, dimenangkan oleh Mukorobin dan menjabat sampai 2013. Tahun 2013 kembali dilaksanakan pilkades dengan calon tunggal Mukorobin, menjabat sampai 2019. Tahun 2019 dilaksanakan pemilihan kepala desa dengan peserta Mukorobin, Haryanto dan Haris Sudrajat. Pemilihan ini dimenangkan oleh Haryanto dimana Haryanto adalah buyut dari Demang Atmo Wirono (Demang pertama kali Kademangan Banyuurip).
+
+Nama Banyuurip sendiri memiliki makna bahwa warga masyarakat Kelurahan Banyuurip adalah orang yang baik serta mempunyai harapan bahwa dengan nama Kelurahan Banyuurip menjadi kelurahan yang ayem tentrem, subur makmur, gemah ripah lohjinawi.`,
+  visi: "MENUJU BANYUURIP YANG TRANSPARAN, AKUNTABEL, DAN SEPENUH HATI DALAM PELAYANAN",
   misi: [
-    "Meningkatkan kualitas pelayanan publik melalui digitalisasi tata kelola desa terpadu.",
-    "Mengembangkan potensi pertanian, peternakan, dan UMKM desa berbasis teknologi modern.",
-    "Meningkatkan kualitas kesehatan dan kesejahteraan masyarakat secara berkelanjutan.",
-    "Mewujudkan keterbukaan informasi publik dan transparansi tata kelola keuangan desa.",
-    "Melestarikan budaya lokal serta membudayakan perilaku hidup bersih dan tertib di masyarakat."
+    "Mengedepankan Pelayanan dengan Kejujuran dan Musyawarah Mufakat dalam setiap kegiatan, baik dengan Aparatur Desa maupun Masyarakat Desa Banyuurip;",
+    "Meningkatkan profesionalitas dan melakukan renovasi system kerja aparatur Desa guna meningkatkan kualitas pelayanan kepada masyarakat;",
+    "Mendengar, Menampung, Menerima, dan Melaksanakan aspirasi Masyarakat untuk mewujudkan pemerintahan yang bersih, jujur, adil, dan terhindar dari segala bentuk penyelewengan;",
+    "Melaksanakan Pembangunan dengan paradigma baru, yaitu pembangunan tidak hanya di bidang sarana prasarana tetapi juga pembangunan dibidang Ekonomi, Sosial, dan Budaya, serta Kesehatan;",
+    "Mendukung penuh segala bentuk kegiatan kepemudaan baik olahraga maupun kegiatan ekonomi kreatif."
   ],
   perangkatDesa: [
     { nama: "Bapak Sriyanto", jabatan: "Kepala Desa Banyuurip", foto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" },
@@ -182,7 +229,7 @@ export const mockNews: NewsItem[] = [
     category: "Masyarakat",
     summary: "Penerapan konsep Seiri, Seiton, Seiso, Seiketsu, dan Shitsuke disesuaikan dengan kehidupan sehari-hari dan lingkungan balai desa Banyuurip.",
     content: "Program edukasi budaya 5S Jepang (Ringkas, Rapi, Resik, Rawat, Rajin) resmi diperkenalkan kepada warga dan pelaku usaha di Desa Banyuurip. Konsep ini bertujuan membangun kebiasaan hidup bersih, penataan peralatan kerja yang sistematis, serta kedisiplinan lingkungan sekitar dusun.",
-    author: "Muhammad Daffa Fahreza",
+    author: "Pemdes Banyuurip",
     date: "2026-07-22",
     imageUrl: "https://images.unsplash.com/photo-1528164344705-47542687990d?auto=format&fit=crop&w=800&q=80",
     views: 215
@@ -294,39 +341,71 @@ export const mockUMKM: UMKMItem[] = [
 ];
 
 export const mockAgriculture: AgricultureData = {
+  gambaranUmum: "Desa Banyuurip adalah salah satu desa di mana sektor pertanian menjadi sumber penghasilan utama bagi warganya. Komoditas utama yang diproduksi di desa adalah padi dan jagung, dengan sistem penanamannya disesuaikan berdasarkan kondisi tanah dan musim.",
+  luasWilayahPertanian: [
+    { jenisLahan: "Lahan sawah", luas: 141.00 },
+    { jenisLahan: "Sawah irigasi setengah teknis", luas: 309.01 },
+    { jenisLahan: "Sawah tadah hujan", luas: 65.00 },
+    { jenisLahan: "Tegal/Kebun", luas: 76.00 },
+    { jenisLahan: "Pekarangan", luas: 162.22 },
+    { jenisLahan: "Lain-lain", luas: 113.38 }
+  ],
+  totalLuasWilayah: 450.01,
+  sumberDataLuas: "BPP Kecamatan Klego",
+  komoditasUnggulanData: [
+    { nama: "Padi", produktivitas: "6,2 ton/ha" },
+    { nama: "Jagung Hibrida", produktivitas: "4,5 ton/ha" }
+  ],
+  polaTanam: "Padi ➔ Padi ➔ Jagung / Kacang Tanah",
+  gapoktanInfo: {
+    nama: "Subur Makmur",
+    ketua: "Bapak Darji",
+    jumlahPoktan: 9
+  },
+  poktanList: [
+    { nama: "Sidomukti I", ketua: "Sukardi", alamat: "Tlogosari RT22 RW06", anggota: 85 },
+    { nama: "Sidomukti II", ketua: "Purwanto", alamat: "Banyuurip RT16 RW05", anggota: 43 },
+    { nama: "Sidomuncul I", ketua: "Muadif", alamat: "Ngijo RT04 RW01", anggota: 50 },
+    { nama: "Sidomuncul II", ketua: "Shodiq", alamat: "Ngijo RT03 RW01", anggota: 60 },
+    { nama: "Harapan I", ketua: "Basuki", alamat: "Banyuurip RT14 RW01", anggota: 47 },
+    { nama: "Harapan II", ketua: "Muh Thoha", alamat: "Palemrejo RT09 RW02", anggota: 60 },
+    { nama: "Ngudi Rejeki I", ketua: "Supadi", alamat: "Ngeliyangan RT24 RW07", anggota: 26 },
+    { nama: "Ngudi Rejeki II", ketua: "Juwadi", alamat: "Jlegong RT11 RW03", anggota: 82 },
+    { nama: "Ngudi Rejeki III", ketua: "Jumanto", alamat: "Ngeliyangan RT27 RW07", anggota: 54 }
+  ],
   komoditas: [
     {
       id: "agr-1",
       nama: "Padi IR-64 & Inpari 32",
       kategori: "Tanaman Pangan",
-      luasLahan: 145.5,
-      estimasiHasil: "870 Ton / Musim Panen",
+      luasLahan: 141.0,
+      estimasiHasil: "6,2 ton/ha (Panen Raya MT 1 & MT 2)",
       musimTanam: "November - Februari (MT 1), Maret - Juni (MT 2)",
-      musimPanen: "Maret & Juli",
-      kelompokTani: "Poktan Tani Makmur I & II",
-      lokasi: "Sawah Blok Krajan & Wonosari"
+      musimPanen: "Maret & Juli (Panen Padi)",
+      kelompokTani: "Gapoktan Subur Makmur (9 Poktan)",
+      lokasi: "Sawah Irigasi & Tadah Hujan Banyuurip"
     },
     {
       id: "agr-2",
       nama: "Jagung Hibrida",
       kategori: "Tanaman Pangan",
-      luasLahan: 62.0,
-      estimasiHasil: "310 Ton / Musim",
-      musimTanam: "July - Oktober (MT 3)",
+      luasLahan: 76.0,
+      estimasiHasil: "4,5 ton/ha (MT 3 Kemarau)",
+      musimTanam: "Juli - Oktober (MT 3 Kemarau)",
       musimPanen: "Oktober - November",
-      kelompokTani: "Poktan Sumber Rejeki",
-      lokasi: "Lahan Tegal Banyuurip II"
+      kelompokTani: "Gapoktan Subur Makmur",
+      lokasi: "Lahan Tegal & Kebun Desa Banyuurip"
     },
     {
       id: "agr-3",
-      nama: "Cabai Merah Keriting",
-      kategori: "Hortikultura",
-      luasLahan: 28.0,
-      estimasiHasil: "140 Ton / Tahun",
-      musimTanam: "April - Mei",
-      musimPanen: "Agustus - Oktober (Panen Berkala)",
-      kelompokTani: "Gapoktan Banyuurip Sejahtera",
-      lokasi: "Lahan Hortikultura Wonosari"
+      nama: "Kacang Tanah & Hortikultura",
+      kategori: "Palawija",
+      luasLahan: 65.0,
+      estimasiHasil: "2,8 ton/ha",
+      musimTanam: "Agustus - November",
+      musimPanen: "November (Akhir Kemarau)",
+      kelompokTani: "Poktan Sidomukti & Harapan",
+      lokasi: "Lahan Tegal & Sawah Tadah Hujan"
     },
     {
       id: "agr-4",
@@ -394,14 +473,55 @@ export const mockAgriculture: AgricultureData = {
 
 export const mockAPBDes: APBDesData = {
   tahun: 2026,
-  totalPendapatan: 1845000000,
-  totalBelanja: 1812000000,
+  totalPendapatan: 1590000000,
+  totalRealisasiPendapatan: 1413000000,
+  totalBelanja: 1550000000,
   pendapatan: [
-    { sumber: "Dana Desa (APBN)", jumlah: 980000000, persen: 53.1 },
-    { sumber: "Alokasi Dana Desa (ADD Boyolali)", jumlah: 540000000, persen: 29.3 },
-    { sumber: "Bagi Hasil Pajak & Retribusi", jumlah: 125000000, persen: 6.8 },
-    { sumber: "Pendapatan Asli Desa (PADes)", jumlah: 110000000, persen: 6.0 },
-    { sumber: "Bantuan Keuangan Provinsi/Kabupaten", jumlah: 90000000, persen: 4.8 }
+    { 
+      sumber: "Dana Desa (DD)", 
+      anggaran: 750000000, 
+      realisasi: 675000000, 
+      jumlah: 750000000, 
+      persen: 90.0, 
+      porsiAnggaran: 47.17, 
+      warna: "#10b981" 
+    },
+    { 
+      sumber: "Alokasi Dana Desa (ADD)", 
+      anggaran: 450000000, 
+      realisasi: 405000000, 
+      jumlah: 450000000, 
+      persen: 90.0, 
+      porsiAnggaran: 28.30, 
+      warna: "#3b82f6" 
+    },
+    { 
+      sumber: "Pajak Bagi Hasil", 
+      anggaran: 150000000, 
+      realisasi: 135000000, 
+      jumlah: 150000000, 
+      persen: 90.0, 
+      porsiAnggaran: 9.43, 
+      warna: "#8b5cf6" 
+    },
+    { 
+      sumber: "Pendapatan Asli Desa (PADes)", 
+      anggaran: 120000000, 
+      realisasi: 102000000, 
+      jumlah: 120000000, 
+      persen: 85.0, 
+      porsiAnggaran: 7.55, 
+      warna: "#f59e0b" 
+    },
+    { 
+      sumber: "Bantuan Keuangan", 
+      anggaran: 120000000, 
+      realisasi: 96000000, 
+      jumlah: 120000000, 
+      persen: 80.0, 
+      porsiAnggaran: 7.55, 
+      warna: "#ec4899" 
+    }
   ],
   belanja: [
     { bidang: "Penyelenggaraan Pemerintahan Desa", jumlah: 580000000, persen: 32.0 },

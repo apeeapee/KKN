@@ -118,14 +118,26 @@ export default function Footer() {
               <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
               <span>Jl. Raya Banyuurip - Klego No. 01, Kecamatan Klego, Kabupaten Boyolali, Jawa Tengah 57385</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>(0276) 800-BANYU / 0812-9900-BANYU</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>pemdes@banyuurip.desa.id</span>
-            </div>
+            <a 
+              href={`https://wa.me/6281327349963?text=${encodeURIComponent('Halo Pemerintah Desa Banyuurip, saya ingin berkonsultasi seputar pelayanan & informasi Desa Banyuurip.')}`}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 hover:text-emerald-400 transition-colors group"
+              title="Klik untuk menghubungi WhatsApp Resmi Pemdes Banyuurip"
+            >
+              <Phone className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <span className="font-medium text-slate-300 group-hover:text-emerald-300">081327349963 (WhatsApp Resmi)</span>
+            </a>
+            <a 
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=banyuuripboyolali@gmail.com"
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 hover:text-emerald-400 transition-colors group"
+              title="Klik untuk langsung mengirim email via Gmail"
+            >
+              <Mail className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <span className="font-medium text-slate-300 group-hover:text-emerald-300">banyuuripboyolali@gmail.com</span>
+            </a>
             <div className="flex items-center gap-2">
               <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>www.banyuurip.desa.id</span>

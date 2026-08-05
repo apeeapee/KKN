@@ -30,10 +30,11 @@ import {
   FileCheck,
   Edit3,
   X,
-  Check
+  Check,
+  Package
 } from 'lucide-react';
 import { useData } from '@/components/DataProvider';
-import { ISPALogItem } from '@/lib/mock-data';
+import { ISPALogItem, NewsItem, UMKMItem, AdminUser } from '@/lib/mock-data';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -41,7 +42,7 @@ export default function AdminDashboardPage() {
 
   // Active Menu Section State
   const [activeMenu, setActiveMenu] = useState<
-    'ikhtisar' | 'berita' | 'sejarah' | 'perangkat' | 'komoditas' | 'aset_tani' | 'regulasi' | 'apbdes' | 'antikorupsi' | 'umkm' | 'ispa'
+    'ikhtisar' | 'berita' | 'sejarah' | 'perangkat' | 'komoditas' | 'aset_tani' | 'regulasi' | 'apbdes' | 'antikorupsi' | 'umkm' | 'ispa' | 'users'
   >('ikhtisar');
 
   // Accordion Open States (Sesuai Screenshot Acuan)
@@ -55,15 +56,59 @@ export default function AdminDashboardPage() {
   // Form Modals State
   const [showAddNews, setShowAddNews] = useState(false);
   const [newsForm, setNewsForm] = useState({ title: '', category: 'Pemerintahan', summary: '', content: '', author: 'Admin Desa Banyuurip', imageUrl: '' });
+  const [editingNewsItem, setEditingNewsItem] = useState<NewsItem | null>(null);
 
   const [showAddDoc, setShowAddDoc] = useState(false);
   const [docForm, setDocForm] = useState({ nomor: '', tahun: 2026, judul: '', kategori: 'Perdes', deskripsi: '', fileUrl: '#', tglTerbit: '2026-01-15', status: 'Berlaku' });
 
   const [showAddUMKM, setShowAddUMKM] = useState(false);
   const [umkmForm, setUmkmForm] = useState({ namaUsaha: '', pemilik: '', kategori: 'Kuliner', deskripsi: '', alamat: '', kontak: '', omzetBulanan: 3000000, produkUtama: '', imageUrl: '' });
+  const [editingUMKMItem, setEditingUMKMItem] = useState<UMKMItem | null>(null);
+
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [userForm, setUserForm] = useState<{
+    username: string;
+    namaLengkap: string;
+    jabatan: string;
+    role: 'Super Admin' | 'Admin Perangkat Desa';
+    password: string;
+    status: 'Aktif' | 'Nonaktif';
+    avatarUrl: string;
+  }>({
+    username: '',
+    namaLengkap: '',
+    jabatan: 'Admin Perangkat Desa',
+    role: 'Admin Perangkat Desa',
+    password: 'banyuurip2026',
+    status: 'Aktif',
+    avatarUrl: ''
+  });
+  const [editingUserItem, setEditingUserItem] = useState<AdminUser | null>(null);
 
   const [showAddAgri, setShowAddAgri] = useState(false);
   const [agriForm, setAgriForm] = useState({ nama: '', kategori: 'Tanaman Pangan', luasLahan: 10, estimasiHasil: '50 Ton / Musim', musimTanam: 'MT 1 (Nov - Feb)', musimPanen: 'Maret', kelompokTani: 'Poktan Tani Makmur', lokasi: 'Sawah Blok Krajan' });
+
+  const [showAddBalaiAsset, setShowAddBalaiAsset] = useState(false);
+  const [balaiAssetForm, setBalaiAssetForm] = useState({
+    namaAset: '',
+    kategori: 'Peralatan Acara & Hajatan',
+    kapasitas: '',
+    lokasi: 'Gudang Balai Desa Banyuurip',
+    status: 'Tersedia',
+    syarat: 'KTP Warga Banyuurip & Surat Permohonan ke Kaur Umum',
+    penanggungJawab: 'Pak Bambang (Kaur Umum)'
+  });
+
+  const [showAddAntiKorupsiModal, setShowAddAntiKorupsiModal] = useState(false);
+  const [antiKorupsiForm, setAntiKorupsiForm] = useState({
+    kodeIndikator: `IND-0${data.antiKorupsiIndikatorList.length + 1}`,
+    judul: '',
+    kategori: 'Penataan Tatalaksana',
+    deskripsi: '',
+    status: 'Terpenuhi 100%' as const,
+    gdriveUrl: '',
+    tahun: 2026
+  });
 
   const [showAddPerangkat, setShowAddPerangkat] = useState(false);
   const [perangkatForm, setPerangkatForm] = useState({ nama: '', jabatan: '', foto: '' });
@@ -72,12 +117,20 @@ export default function AdminDashboardPage() {
   const [sejarahText, setSejarahText] = useState(data.villageProfile.sejarah);
 
   const [showEditAPBDes, setShowEditAPBDes] = useState(false);
-  const [apbdesForm, setApbdesForm] = useState({
-    totalPendapatan: data.apbdesData.totalPendapatan,
-    totalBelanja: data.apbdesData.totalBelanja
+  const [apbdesItemsForm, setApbdesItemsForm] = useState(data.apbdesData.pendapatan || []);
+  const [apbdesBelanjaForm, setApbdesBelanjaForm] = useState(data.apbdesData.totalBelanja || 1550000000);
+
+  const [agriSubTab, setAgriSubTab] = useState<'komoditas' | 'poktan' | 'lahan'>('komoditas');
+  const [showAddPoktanModal, setShowAddPoktanModal] = useState(false);
+  const [poktanForm, setPoktanForm] = useState({ nama: '', ketua: '', alamat: '', anggota: 50 });
+  const [gapoktanForm, setGapoktanForm] = useState({
+    nama: data.agriData.gapoktanInfo?.nama || 'Subur Makmur',
+    ketua: data.agriData.gapoktanInfo?.ketua || 'Bapak Darji'
   });
+  const [lahanForm, setLahanForm] = useState(data.agriData.luasWilayahPertanian || []);
 
   const handleLogout = async () => {
+    localStorage.removeItem('byu_admin_session');
     await fetch('/api/auth/logout', { method: 'POST' });
     router.push('/login');
     router.refresh();
@@ -93,6 +146,24 @@ export default function AdminDashboardPage() {
     document.addEventListener('click', handleOutsideClick);
     return () => document.removeEventListener('click', handleOutsideClick);
   }, []);
+
+  // Image File Upload Helper (converts to Base64)
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Ukuran foto terlalu besar! Maksimal 5MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          callback(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Handlers for Form Submissions
   const handleAddNewsSubmit = (e: React.FormEvent) => {
@@ -110,6 +181,21 @@ export default function AdminDashboardPage() {
     setShowAddNews(false);
     setNewsForm({ title: '', category: 'Pemerintahan', summary: '', content: '', author: 'Admin Desa Banyuurip', imageUrl: '' });
     alert('Berita baru berhasil diterbitkan & langsung tayang di portal publik!');
+  };
+
+  const handleEditNewsSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingNewsItem) return;
+    data.updateNews(editingNewsItem.id, {
+      title: editingNewsItem.title,
+      category: editingNewsItem.category,
+      author: editingNewsItem.author,
+      summary: editingNewsItem.summary,
+      content: editingNewsItem.content,
+      imageUrl: editingNewsItem.imageUrl || 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80'
+    });
+    setEditingNewsItem(null);
+    alert('Data berita berhasil diperbarui!');
   };
 
   const handleAddDocSubmit = (e: React.FormEvent) => {
@@ -132,6 +218,74 @@ export default function AdminDashboardPage() {
     alert('Usaha UMKM baru berhasil terverifikasi & tampil di Katalog Desa!');
   };
 
+  const handleEditUMKMSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUMKMItem) return;
+    data.updateUMKM(editingUMKMItem.id, {
+      namaUsaha: editingUMKMItem.namaUsaha,
+      pemilik: editingUMKMItem.pemilik,
+      kategori: editingUMKMItem.kategori,
+      produkUtama: editingUMKMItem.produkUtama,
+      omzetBulanan: Number(editingUMKMItem.omzetBulanan),
+      alamat: editingUMKMItem.alamat,
+      kontak: editingUMKMItem.kontak,
+      deskripsi: editingUMKMItem.deskripsi,
+      imageUrl: editingUMKMItem.imageUrl || 'https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&w=600&q=80'
+    });
+    setEditingUMKMItem(null);
+    alert('Data UMKM berhasil diperbarui!');
+  };
+
+  const handleAddUserSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userForm.username || !userForm.namaLengkap) {
+      alert('Mohon lengkapi username dan nama lengkap admin.');
+      return;
+    }
+    const exists = (data.adminUsers || []).some(u => u.username.toLowerCase() === userForm.username.toLowerCase());
+    if (exists) {
+      alert(`Username "${userForm.username}" sudah digunakan! Gunakan username lain.`);
+      return;
+    }
+
+    data.addAdminUser({
+      username: userForm.username.toLowerCase().trim(),
+      namaLengkap: userForm.namaLengkap,
+      jabatan: userForm.jabatan || 'Admin Perangkat Desa',
+      role: userForm.role,
+      password: userForm.password || 'banyuurip2026',
+      status: userForm.status,
+      avatarUrl: userForm.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+    });
+    setShowAddUser(false);
+    setUserForm({
+      username: '',
+      namaLengkap: '',
+      jabatan: 'Admin Perangkat Desa',
+      role: 'Admin Perangkat Desa',
+      password: 'banyuurip2026',
+      status: 'Aktif',
+      avatarUrl: ''
+    });
+    alert('Akun Admin baru berhasil didaftarkan! Akun ini dapat langsung digunakan untuk login.');
+  };
+
+  const handleEditUserSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUserItem) return;
+    data.updateAdminUser(editingUserItem.id, {
+      username: editingUserItem.username.toLowerCase().trim(),
+      namaLengkap: editingUserItem.namaLengkap,
+      jabatan: editingUserItem.jabatan,
+      role: editingUserItem.role,
+      password: editingUserItem.password,
+      status: editingUserItem.status,
+      avatarUrl: editingUserItem.avatarUrl
+    });
+    setEditingUserItem(null);
+    alert('Data akun admin berhasil diperbarui!');
+  };
+
   const handleAddAgriSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     data.addAgriKomoditas({
@@ -140,6 +294,38 @@ export default function AdminDashboardPage() {
     });
     setShowAddAgri(false);
     alert('Data komoditas tani berhasil ditambahkan ke kalender tanam!');
+  };
+
+  const handleAddBalaiAssetSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    data.addBalaiDesaAsset(balaiAssetForm);
+    setShowAddBalaiAsset(false);
+    setBalaiAssetForm({
+      namaAset: '',
+      kategori: 'Peralatan Acara & Hajatan',
+      kapasitas: '',
+      lokasi: 'Gudang Balai Desa Banyuurip',
+      status: 'Tersedia',
+      syarat: 'KTP Warga Banyuurip & Surat Permohonan ke Kaur Umum',
+      penanggungJawab: 'Pak Bambang (Kaur Umum)'
+    });
+    alert('Aset Balai Desa baru berhasil ditambahkan ke inventaris publik!');
+  };
+
+  const handleAddAntiKorupsiSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    data.addAntiKorupsiIndikator(antiKorupsiForm);
+    setShowAddAntiKorupsiModal(false);
+    setAntiKorupsiForm({
+      kodeIndikator: `IND-0${data.antiKorupsiIndikatorList.length + 2}`,
+      judul: '',
+      kategori: 'Penataan Tatalaksana',
+      deskripsi: '',
+      status: 'Terpenuhi 100%',
+      gdriveUrl: '',
+      tahun: 2026
+    });
+    alert('Indikator Integritas Desa Anti Korupsi baru berhasil disimpan!');
   };
 
   const handleAddPerangkatSubmit = (e: React.FormEvent) => {
@@ -163,12 +349,81 @@ export default function AdminDashboardPage() {
 
   const handleEditAPBDesSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const calculatedTotalPendapatan = apbdesItemsForm.reduce((acc, curr) => acc + Number(curr.anggaran), 0);
+    const calculatedTotalRealisasi = apbdesItemsForm.reduce((acc, curr) => acc + Number(curr.realisasi), 0);
+    
+    const updatedPendapatanList = apbdesItemsForm.map((item) => {
+      const angg = Number(item.anggaran) || 1;
+      const real = Number(item.realisasi) || 0;
+      const porsi = calculatedTotalPendapatan > 0 ? Number(((angg / calculatedTotalPendapatan) * 100).toFixed(2)) : 0;
+      const pct = Number(((real / angg) * 100).toFixed(1));
+      return {
+        ...item,
+        anggaran: angg,
+        realisasi: real,
+        jumlah: angg,
+        persen: pct,
+        porsiAnggaran: porsi
+      };
+    });
+
     data.updateAPBDes({
-      totalPendapatan: Number(apbdesForm.totalPendapatan),
-      totalBelanja: Number(apbdesForm.totalBelanja)
+      totalPendapatan: calculatedTotalPendapatan,
+      totalRealisasiPendapatan: calculatedTotalRealisasi,
+      totalBelanja: Number(apbdesBelanjaForm),
+      pendapatan: updatedPendapatanList
     });
     setShowEditAPBDes(false);
-    alert('Anggaran APBDes 2026 berhasil diperbarui!');
+    alert('Data Rincian Anggaran & Realisasi APBDes 2026 berhasil diperbarui!');
+  };
+
+  const handleAddPoktanSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const currentList = data.agriData.poktanList || [];
+    data.updateAgriData({
+      poktanList: [...currentList, { ...poktanForm, anggota: Number(poktanForm.anggota) }]
+    });
+    setShowAddPoktanModal(false);
+    setPoktanForm({ nama: '', ketua: '', alamat: '', anggota: 50 });
+    alert('Kelompok Tani (Poktan) baru berhasil ditambahkan!');
+  };
+
+  const handleDeletePoktan = (idx: number) => {
+    if (!confirm('Apakah Anda yakin ingin menghapus kelompok tani ini?')) return;
+    const currentList = data.agriData.poktanList || [];
+    const updated = currentList.filter((_, i) => i !== idx);
+    data.updateAgriData({ poktanList: updated });
+  };
+
+  const handleUpdateGapoktan = (e: React.FormEvent) => {
+    e.preventDefault();
+    data.updateAgriData({
+      gapoktanInfo: {
+        nama: gapoktanForm.nama,
+        ketua: gapoktanForm.ketua,
+        jumlahPoktan: (data.agriData.poktanList || []).length
+      }
+    });
+    alert('Data Gapoktan berhasil diperbarui!');
+  };
+
+  const handleUpdateLahan = (e: React.FormEvent) => {
+    e.preventDefault();
+    const calculatedTotalLuas = lahanForm.reduce((acc, curr) => acc + Number(curr.luas || 0), 0);
+    const formattedList = lahanForm.map(l => ({ jenisLahan: l.jenisLahan, luas: Number(l.luas || 0) }));
+    data.updateAgriData({
+      luasWilayahPertanian: formattedList,
+      totalLuasWilayah: Number(calculatedTotalLuas.toFixed(2))
+    });
+    alert(`Data Sebaran Luas Wilayah Pertanian berhasil diperbarui! (Total: ${calculatedTotalLuas.toFixed(2)} Ha)`);
+  };
+
+  const handleAddLahanRow = () => {
+    setLahanForm([...lahanForm, { jenisLahan: 'Lahan Baru', luas: 10 }]);
+  };
+
+  const handleDeleteLahanRow = (idx: number) => {
+    setLahanForm(lahanForm.filter((_, i) => i !== idx));
   };
 
   // Helper styling for ISPA Risiko
@@ -310,8 +565,8 @@ export default function AdminDashboardPage() {
                         activeMenu === 'aset_tani' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                       }`}
                     >
-                      <Wrench className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Aset Mesin Tanam</span>
+                      <Package className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Peminjaman Aset Balai Desa</span>
                     </button>
                   </div>
                 </div>
@@ -364,16 +619,7 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* 5. Direktori UMKM */}
-              <button
-                onClick={() => setActiveMenu('umkm')}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${
-                  activeMenu === 'umkm' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                <Store className="w-4 h-4 text-slate-500" />
-                <span>Direktori UMKM</span>
-              </button>
+
 
               {/* 6. Log Skrining ISPA */}
               <button
@@ -384,6 +630,17 @@ export default function AdminDashboardPage() {
               >
                 <HeartPulse className="w-4 h-4 text-slate-500" />
                 <span>Log Skrining ISPA</span>
+              </button>
+
+              {/* 7. Kelola Pengguna & Akun Admin */}
+              <button
+                onClick={() => setActiveMenu('users')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${
+                  activeMenu === 'users' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <Users className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span className="font-bold">Kelola Akun Admin</span>
               </button>
 
             </div>
@@ -625,15 +882,29 @@ export default function AdminDashboardPage() {
 
             <div className="space-y-3">
               {data.newsList.map((n) => (
-                <div key={n.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
-                  <div>
-                    <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px]">{n.category}</span>
-                    <h4 className="font-bold text-slate-900 text-sm mt-1">{n.title}</h4>
-                    <p className="text-slate-500 line-clamp-1">{n.summary}</p>
+                <div key={n.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-4 text-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-16 h-12 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300">
+                      <img src={n.imageUrl} alt={n.title} className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px]">{n.category}</span>
+                      <h4 className="font-bold text-slate-900 text-sm mt-0.5">{n.title}</h4>
+                      <p className="text-slate-500 line-clamp-1">{n.summary}</p>
+                    </div>
                   </div>
-                  <button onClick={() => data.deleteNews(n.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingNewsItem(n)}
+                      className="p-2 rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 font-bold flex items-center gap-1"
+                      title="Sunting Berita"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => data.deleteNews(n.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700 hover:bg-rose-200">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -658,7 +929,7 @@ export default function AdminDashboardPage() {
 
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed space-y-2">
               <span className="font-bold text-slate-900 block text-sm">Teks Narasi Sejarah Aktif:</span>
-              <p>{data.villageProfile.sejarah}</p>
+              <p className="whitespace-pre-line">{data.villageProfile.sejarah}</p>
             </div>
           </div>
         )}
@@ -698,73 +969,287 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* 4. KOMODITAS TANI SECTION */}
+        {/* 4. KOMODITAS & DATA PERTANIAN SECTION */}
         {activeMenu === 'komoditas' && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
+              <div>
+                <h3 className="font-bold text-lg text-slate-900">Kelola Sektor Pertanian Desa Banyuurip</h3>
+                <p className="text-xs text-slate-500">Pendataan komoditas, kelembagaan 9 Poktan/Gapoktan, dan sebaran lahan pertanian.</p>
+              </div>
+
+              {/* Sub-tabs */}
+              <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+                <button
+                  onClick={() => setAgriSubTab('komoditas')}
+                  className={`px-3 py-1.5 rounded-lg transition-all ${agriSubTab === 'komoditas' ? 'bg-white shadow text-emerald-800' : 'text-slate-600'}`}
+                >
+                  Komoditas Tani
+                </button>
+                <button
+                  onClick={() => setAgriSubTab('poktan')}
+                  className={`px-3 py-1.5 rounded-lg transition-all ${agriSubTab === 'poktan' ? 'bg-white shadow text-emerald-800' : 'text-slate-600'}`}
+                >
+                  9 Poktan & Gapoktan
+                </button>
+                <button
+                  onClick={() => setAgriSubTab('lahan')}
+                  className={`px-3 py-1.5 rounded-lg transition-all ${agriSubTab === 'lahan' ? 'bg-white shadow text-emerald-800' : 'text-slate-600'}`}
+                >
+                  Luas Wilayah Pertanian
+                </button>
+              </div>
+            </div>
+
+            {/* Sub-tab 1: Komoditas */}
+            {agriSubTab === 'komoditas' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-bold text-sm text-slate-900">Daftar Komoditas Tani & Hasil Panen</h4>
+                  <button
+                    onClick={() => setShowAddAgri(true)}
+                    className="bg-slate-950 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Tambah Komoditas
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {data.agriData.komoditas.map((k) => (
+                    <div key={k.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
+                      <div>
+                        <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px]">{k.kategori}</span>
+                        <h4 className="font-bold text-slate-900 mt-1 text-sm">{k.nama}</h4>
+                        <p className="text-slate-500">Luas/Jumlah: {k.luasLahan ? `${k.luasLahan} Ha` : `${k.jumlahTernak} Ekor`} • Hasil: {k.estimasiHasil} • Tanam: {k.musimTanam}</p>
+                      </div>
+                      <button onClick={() => data.deleteAgriKomoditas(k.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sub-tab 2: 9 Poktan & Gapoktan */}
+            {agriSubTab === 'poktan' && (
+              <div className="space-y-6">
+                
+                {/* Gapoktan Form Card */}
+                <div className="bg-emerald-50/80 p-5 rounded-2xl border border-emerald-200 space-y-3 text-xs">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-emerald-900 text-sm">Informasi Gapoktan (Gabungan Kelompok Tani)</span>
+                    <button onClick={handleUpdateGapoktan} className="bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-xl">Simpan Gapoktan</button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1">Nama Gapoktan</label>
+                      <input
+                        type="text"
+                        value={gapoktanForm.nama}
+                        onChange={(e) => setGapoktanForm({ ...gapoktanForm, nama: e.target.value })}
+                        className="w-full p-2.5 rounded-xl border border-slate-300 bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1">Ketua Gapoktan</label>
+                      <input
+                        type="text"
+                        value={gapoktanForm.ketua}
+                        onChange={(e) => setGapoktanForm({ ...gapoktanForm, ketua: e.target.value })}
+                        className="w-full p-2.5 rounded-xl border border-slate-300 bg-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 9 Poktan List */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-bold text-sm text-slate-900">Daftar 9 Kelompok Tani (Poktan) Terdaftar</h4>
+                    <button
+                      onClick={() => setShowAddPoktanModal(true)}
+                      className="bg-slate-950 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Tambah Poktan Baru
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                    {(data.agriData.poktanList || []).map((p, idx) => (
+                      <div key={idx} className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2 relative">
+                        <div className="flex justify-between items-center border-b pb-1.5">
+                          <h5 className="font-bold text-slate-900">{p.nama}</h5>
+                          <button onClick={() => handleDeletePoktan(idx)} className="p-1 rounded text-rose-600 hover:bg-rose-50"><Trash2 className="w-3.5 h-3.5" /></button>
+                        </div>
+                        <div className="text-[11px] text-slate-600 space-y-0.5">
+                          <p><strong className="text-slate-500">Ketua:</strong> {p.ketua}</p>
+                          <p><strong className="text-slate-500">Alamat:</strong> {p.alamat}</p>
+                          <p><strong className="text-slate-500">Anggota:</strong> <span className="font-bold text-emerald-700">{p.anggota} Orang</span></p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* Sub-tab 3: Luas Wilayah Pertanian (Editable) */}
+            {agriSubTab === 'lahan' && (
+              <form onSubmit={handleUpdateLahan} className="space-y-6 text-xs">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3">
+                  <div>
+                    <h4 className="font-bold text-sm text-slate-900">Sunting Data Sebaran Luas Wilayah Pertanian (BPP Kecamatan Klego)</h4>
+                    <p className="text-slate-500">Ubah nominal hektar (Ha) tiap jenis penggunaan lahan. Total otomatis dihitung oleh sistem.</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleAddLahanRow}
+                      className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-2 rounded-xl flex items-center gap-1.5"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Tambah Baris Lahan
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-4 py-2 rounded-xl shadow-xs"
+                    >
+                      Simpan Data Luas Lahan
+                    </button>
+                  </div>
+                </div>
+
+                {/* Calculated Total Callout */}
+                <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-200 flex items-center justify-between">
+                  <span className="font-semibold text-emerald-900">Total Akumulasi Luas Wilayah Pertanian:</span>
+                  <span className="text-xl font-black text-emerald-700">
+                    {lahanForm.reduce((acc, curr) => acc + Number(curr.luas || 0), 0).toFixed(2)} Ha
+                  </span>
+                </div>
+
+                {/* Form Input Rows Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {lahanForm.map((lahan, idx) => (
+                    <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3 relative group">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-extrabold text-slate-400 uppercase">Kategori #{idx + 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteLahanRow(idx)}
+                          className="p-1 rounded text-rose-600 hover:bg-rose-100 transition-colors"
+                          title="Hapus Baris Ini"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Jenis Penggunaan Lahan</label>
+                        <input
+                          type="text"
+                          required
+                          value={lahan.jenisLahan}
+                          onChange={(e) => {
+                            const newArr = [...lahanForm];
+                            newArr[idx].jenisLahan = e.target.value;
+                            setLahanForm(newArr);
+                          }}
+                          className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-slate-900"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Luas (Hektar / Ha)</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          required
+                          value={lahan.luas}
+                          onChange={(e) => {
+                            const newArr = [...lahanForm];
+                            newArr[idx].luas = Number(e.target.value);
+                            setLahanForm(newArr);
+                          }}
+                          className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-mono font-bold text-emerald-700"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-end pt-2 border-t">
+                  <button
+                    type="submit"
+                    className="bg-emerald-800 hover:bg-emerald-900 text-white font-bold px-6 py-2.5 rounded-xl shadow-xs"
+                  >
+                    Simpan Data Luas Lahan
+                  </button>
+                </div>
+              </form>
+            )}
+
+          </div>
+        )}
+
+        {/* 5. PEMINJAMAN ASET BALAI DESA SECTION */}
+        {activeMenu === 'aset_tani' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
             <div className="flex justify-between items-center border-b pb-4">
               <div>
-                <h3 className="font-bold text-lg text-slate-900">Komoditas Tani & Kalender Tanam</h3>
-                <p className="text-xs text-slate-500">Pendataan tanaman pangan, hortikultura, peternakan, & estimasi hasil panen.</p>
+                <h3 className="font-bold text-lg text-slate-900">Peminjaman & Inventaris Aset Balai Desa</h3>
+                <p className="text-xs text-slate-500">Kelola inventarisasi barang Balai Desa dan ubah status ketersediaannya secara real-time.</p>
               </div>
               <button
-                onClick={() => setShowAddAgri(true)}
+                onClick={() => setShowAddBalaiAsset(true)}
                 className="bg-slate-950 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2"
               >
-                <Plus className="w-4 h-4" /> Tambah Komoditas Tani
+                <Plus className="w-4 h-4" /> Tambah Barang Aset
               </button>
             </div>
 
             <div className="space-y-3">
-              {data.agriData.komoditas.map((k) => (
-                <div key={k.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
-                  <div>
-                    <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px]">{k.kategori}</span>
-                    <h4 className="font-bold text-slate-900 mt-1 text-sm">{k.nama}</h4>
-                    <p className="text-slate-500">Luas/Jumlah: {k.luasLahan ? `${k.luasLahan} Ha` : `${k.jumlahTernak} Ekor`} • Hasil: {k.estimasiHasil} • Tanam: {k.musimTanam}</p>
-                  </div>
-                  <button onClick={() => data.deleteAgriKomoditas(k.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 5. ASET MESIN TANI SECTION */}
-        {activeMenu === 'aset_tani' && (
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-            <div className="border-b pb-4">
-              <h3 className="font-bold text-lg text-slate-900">Aset Mesin & Gudang Pertanian Desa</h3>
-              <p className="text-xs text-slate-500">Inventarisasi RMU, lumbung pangan, & UPPO pupuk komunal.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {data.agriData.logistikAset.map((aset) => (
-                <div key={aset.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2 text-xs">
-                  <span className="bg-cyan-100 text-cyan-800 font-bold px-2 py-0.5 rounded text-[10px]">{aset.kategori}</span>
-                  <h4 className="font-bold text-slate-900">{aset.namaAset}</h4>
-                  <p className="text-slate-500">• Kapasitas: <strong className="text-emerald-700">{aset.kapasitas}</strong></p>
-                  <p className="text-slate-500">• Lokasi: {aset.lokasi}</p>
+                <div key={aset.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
+                  <div>
+                    <span className="bg-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded text-[10px]">{aset.kategori}</span>
+                    <h4 className="font-bold text-slate-900 mt-1 text-sm">{aset.namaAset}</h4>
+                    <p className="text-slate-500">Kapasitas: {aset.kapasitas} • Lokasi: {aset.lokasi}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <select
+                      value={aset.status}
+                      onChange={(e) => data.updateBalaiDesaAssetStatus(aset.id, e.target.value)}
+                      className={`p-2 rounded-xl border text-xs font-bold ${
+                        aset.status === 'Tersedia' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300'
+                      }`}
+                    >
+                      <option value="Tersedia">Tersedia</option>
+                      <option value="Sedang Dipinjam">Sedang Dipinjam</option>
+                    </select>
+                    <button onClick={() => data.deleteBalaiDesaAsset(aset.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* 6. REGULASI HUKUM SECTION */}
+        {/* 6. REGULASI HUKUM JDIH SECTION */}
         {activeMenu === 'regulasi' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
             <div className="flex justify-between items-center border-b pb-4">
               <div>
-                <h3 className="font-bold text-lg text-slate-900">Regulasi Hukum & Dokumen JDIH</h3>
+                <h3 className="font-bold text-lg text-slate-900">Peraturan Desa & JDIH Hukum</h3>
                 <p className="text-xs text-slate-500">Pengarsipan Perdes, Perkades, Keputusan Kades, & APBDes.</p>
               </div>
               <button
                 onClick={() => setShowAddDoc(true)}
                 className="bg-slate-950 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2"
               >
-                <Plus className="w-4 h-4" /> Tambah Dokumen Hukum
+                <Plus className="w-4 h-4" /> Tambah Berkas JDIH
               </button>
             </div>
 
@@ -772,9 +1257,9 @@ export default function AdminDashboardPage() {
               {data.legalDocs.map((doc) => (
                 <div key={doc.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
                   <div>
-                    <span className="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded text-[10px]">{doc.kategori}</span>
-                    <h4 className="font-bold text-slate-900 mt-1">{doc.nomor} - {doc.judul}</h4>
-                    <p className="text-slate-500 line-clamp-1">{doc.deskripsi}</p>
+                    <span className="bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded text-[10px]">{doc.kategori} • {doc.tahun}</span>
+                    <h4 className="font-bold text-slate-900 mt-1 text-sm">{doc.judul}</h4>
+                    <p className="text-slate-500">Nomor: {doc.nomor} • {doc.deskripsi}</p>
                   </div>
                   <button onClick={() => data.deleteLegalDoc(doc.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700">
                     <Trash2 className="w-4 h-4" />
@@ -790,96 +1275,245 @@ export default function AdminDashboardPage() {
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
             <div className="flex justify-between items-center border-b pb-4">
               <div>
-                <h3 className="font-bold text-lg text-slate-900">Anggaran APBDes 2026</h3>
-                <p className="text-xs text-slate-500">Transparansi nominal pendapatan & belanja desa.</p>
+                <h3 className="font-bold text-lg text-slate-900">Kelola Anggaran & Realisasi APBDes 2026</h3>
+                <p className="text-xs text-slate-500">Kelola rincian 5 sumber pendapatan desa (Anggaran & Realisasi) dan total belanja.</p>
               </div>
               <button
-                onClick={() => setShowEditAPBDes(true)}
+                onClick={() => {
+                  setApbdesItemsForm(data.apbdesData.pendapatan || []);
+                  setApbdesBelanjaForm(data.apbdesData.totalBelanja || 1550000000);
+                  setShowEditAPBDes(true);
+                }}
                 className="bg-slate-950 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2"
               >
-                <Edit3 className="w-4 h-4" /> Sunting Nominal APBDes
+                <Edit3 className="w-4 h-4" /> Sunting Rincian APBDes 2026
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            {/* Stat Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-200 space-y-1 text-xs">
                 <span className="text-emerald-800 font-semibold block">Total Anggaran Pendapatan</span>
-                <span className="text-2xl font-black text-emerald-700">Rp {data.apbdesData.totalPendapatan.toLocaleString('id-ID')}</span>
+                <span className="text-2xl font-black text-emerald-700">Rp {(data.apbdesData.totalPendapatan || 0).toLocaleString('id-ID')}</span>
+              </div>
+              <div className="bg-blue-50 p-5 rounded-2xl border border-blue-200 space-y-1 text-xs">
+                <span className="text-blue-800 font-semibold block">Total Realisasi Terkumpul</span>
+                <span className="text-2xl font-black text-blue-700">Rp {(data.apbdesData.totalRealisasiPendapatan || 0).toLocaleString('id-ID')}</span>
               </div>
               <div className="bg-amber-50 p-5 rounded-2xl border border-amber-200 space-y-1 text-xs">
                 <span className="text-amber-800 font-semibold block">Total Anggaran Belanja</span>
-                <span className="text-2xl font-black text-amber-700">Rp {data.apbdesData.totalBelanja.toLocaleString('id-ID')}</span>
+                <span className="text-2xl font-black text-amber-700">Rp {(data.apbdesData.totalBelanja || 0).toLocaleString('id-ID')}</span>
               </div>
             </div>
+
+            {/* 5 Revenue Items Table */}
+            <div className="space-y-3">
+              <h4 className="font-bold text-xs text-slate-500 uppercase tracking-wider">Rincian 5 Sumber Pendapatan Desa</h4>
+              <div className="space-y-2">
+                {(data.apbdesData.pendapatan || []).map((item, idx) => (
+                  <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-4 text-xs">
+                    <div className="flex items-center gap-3">
+                      <span className="w-3.5 h-3.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.warna || '#10b981' }}></span>
+                      <div>
+                        <h5 className="font-bold text-slate-900 text-sm">{item.sumber}</h5>
+                        <p className="text-slate-500">Porsi: <strong>{item.porsiAnggaran}%</strong> dari Rp 1,59M</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-6 text-right">
+                      <div>
+                        <span className="text-slate-400 text-[10px] block font-medium">Anggaran Target</span>
+                        <span className="font-extrabold text-slate-900">Rp {(item.anggaran || 0).toLocaleString('id-ID')}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 text-[10px] block font-medium">Realisasi Kas</span>
+                        <span className="font-extrabold text-emerald-700">Rp {(item.realisasi || 0).toLocaleString('id-ID')} ({item.persen}%)</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
         )}
 
         {/* 8. DESA ANTIKORUPSI SECTION */}
         {activeMenu === 'antikorupsi' && (
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-            <div className="border-b pb-4">
-              <h3 className="font-bold text-lg text-slate-900">Desa Antikorupsi & WBS Reports</h3>
-              <p className="text-xs text-slate-500">Penanganan pengaduan anonim masyarakat & status tindak lanjut.</p>
+          <div className="space-y-6">
+            
+            {/* Part 1: Indikator & Dokumen GDrive */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+              <div className="flex justify-between items-center border-b pb-4">
+                <div>
+                  <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                    Kelola Indikator & Dokumen GDrive Desa Anti Korupsi
+                  </h3>
+                  <p className="text-xs text-slate-500">Kelola 5 Indikator Integritas KPK beserta Tautan File Bukti di Google Drive.</p>
+                </div>
+                <button
+                  onClick={() => setShowAddAntiKorupsiModal(true)}
+                  className="bg-slate-950 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" /> Tambah Indikator Anti Korupsi
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {data.antiKorupsiIndikatorList.map((ind) => (
+                  <div key={ind.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px]">{ind.kategori}</span>
+                        <span className="font-mono text-slate-400 text-[10px] font-bold">{ind.kodeIndikator}</span>
+                        <span className="text-emerald-700 font-bold text-[10px]">✓ {ind.status}</span>
+                      </div>
+                      <h4 className="font-bold text-slate-900 text-sm">{ind.judul}</h4>
+                      <p className="text-slate-500 line-clamp-1">{ind.deskripsi}</p>
+                      {ind.gdriveUrl && (
+                        <a href={ind.gdriveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-blue-600 font-bold hover:underline">
+                          <ExternalLink className="w-3 h-3" /> Link GDrive: {ind.gdriveUrl}
+                        </a>
+                      )}
+                    </div>
+                    <button onClick={() => data.deleteAntiKorupsiIndikator(ind.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700 shrink-0">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="space-y-4">
-              {data.wbsList.map((wbs) => (
-                <div key={wbs.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
-                      {wbs.kodeLaporan}
-                    </span>
-                    <div className="flex gap-1.5">
-                      {(['Diproses', 'Diverifikasi', 'Selesai'] as const).map((st) => (
-                        <button
-                          key={st}
-                          onClick={() => data.updateWBSStatus(wbs.id, st)}
-                          className={`px-2.5 py-1 rounded-lg font-bold ${wbs.status === st ? 'bg-slate-900 text-white' : 'bg-white border text-slate-600'}`}
-                        >
-                          {st}
-                        </button>
-                      ))}
+            {/* Part 2: WBS Reports */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+              <div className="border-b pb-4">
+                <h3 className="font-bold text-lg text-slate-900">Laporan Whistleblowing System (WBS) Rahasia</h3>
+                <p className="text-xs text-slate-500">Penanganan pengaduan anonim masyarakat & status tindak lanjut.</p>
+              </div>
+
+              <div className="space-y-4">
+                {data.wbsList.map((wbs) => (
+                  <div key={wbs.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
+                        {wbs.kodeLaporan}
+                      </span>
+                      <div className="flex gap-1.5">
+                        {(['Diproses', 'Diverifikasi', 'Selesai'] as const).map((st) => (
+                          <button
+                            key={st}
+                            onClick={() => data.updateWBSStatus(wbs.id, st)}
+                            className={`px-2.5 py-1 rounded-lg font-bold ${wbs.status === st ? 'bg-slate-900 text-white' : 'bg-white border text-slate-600'}`}
+                          >
+                            {st}
+                          </button>
+                        ))}
+                      </div>
                     </div>
+                    <h4 className="font-bold text-sm text-slate-900">{wbs.judulLaporan}</h4>
+                    <p className="text-slate-600 bg-white p-3 rounded-xl border">{wbs.deskripsi}</p>
                   </div>
-                  <h4 className="font-bold text-sm text-slate-900">{wbs.judulLaporan}</h4>
-                  <p className="text-slate-600 bg-white p-3 rounded-xl border">{wbs.deskripsi}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
+
           </div>
         )}
 
-        {/* 9. DIREKTORI UMKM SECTION */}
-        {activeMenu === 'umkm' && (
+
+
+        {/* 11. KELOLA PENGGUNA & AKUN ADMIN SECTION */}
+        {activeMenu === 'users' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-            <div className="flex justify-between items-center border-b pb-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
               <div>
-                <h3 className="font-bold text-lg text-slate-900">Direktori UMKM Desa</h3>
-                <p className="text-xs text-slate-500">Verifikasi usaha warga & peninjauan omzet bulanan.</p>
+                <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-emerald-600" /> Kelola Pengguna & Akun Admin Desa
+                </h3>
+                <p className="text-xs text-slate-500">Kelola hak akses login, perbarui kata sandi, atau tambahkan akun admin baru untuk Perangkat Desa.</p>
               </div>
               <button
-                onClick={() => setShowAddUMKM(true)}
-                className="bg-slate-950 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2"
+                onClick={() => setShowAddUser(true)}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2 shrink-0"
               >
-                <Plus className="w-4 h-4" /> Tambah UMKM Baru
+                <Plus className="w-4 h-4" /> Tambah Akun Admin Baru
               </button>
             </div>
 
+            {/* Stat Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <span className="text-slate-500 text-xs font-medium block">Total Akun Admin</span>
+                <span className="text-2xl font-black text-slate-900 mt-1 block">{(data.adminUsers || []).length} Akun</span>
+              </div>
+              <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+                <span className="text-emerald-800 text-xs font-medium block">Akun Admin Aktif</span>
+                <span className="text-2xl font-black text-emerald-700 mt-1 block">
+                  {(data.adminUsers || []).filter(u => u.status === 'Aktif').length} Akun
+                </span>
+              </div>
+              <div className="bg-blue-50 p-4 rounded-2xl border border-blue-200">
+                <span className="text-blue-800 text-xs font-medium block">Super Admin Sistem</span>
+                <span className="text-2xl font-black text-blue-700 mt-1 block">
+                  {(data.adminUsers || []).filter(u => u.role === 'Super Admin').length} Akun
+                </span>
+              </div>
+            </div>
+
+            {/* Admin Users Table / Cards List */}
             <div className="space-y-3">
-              {data.umkmList.map((u) => (
-                <div key={u.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-sm">{u.namaUsaha}</h4>
-                    <p className="text-slate-500">Pemilik: <strong>{u.pemilik}</strong> • Omzet Bulanan: <span className="text-emerald-700 font-bold">Rp {u.omzetBulanan.toLocaleString('id-ID')}</span></p>
+              {(data.adminUsers || []).map((u) => (
+                <div key={u.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-11 h-11 rounded-2xl overflow-hidden bg-emerald-900 shrink-0 border border-slate-300">
+                      <img src={u.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} alt={u.namaLengkap} className="w-full h-full object-cover" />
+                      <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${u.status === 'Aktif' ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-slate-900 text-sm">{u.namaLengkap}</h4>
+                        <span className="font-mono text-[10px] text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">@{u.username}</span>
+                      </div>
+                      <p className="text-slate-500 text-[11px] mt-0.5">
+                        Jabatan: <strong className="text-slate-700">{u.jabatan}</strong> • Dibuat: {u.createdAt}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`px-2.5 py-1 rounded-xl text-[10px] font-bold ${
+                      u.role === 'Super Admin' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-blue-100 text-blue-800 border border-blue-300'
+                    }`}>
+                      {u.role}
+                    </span>
+
                     <button
-                      onClick={() => data.toggleVerifyUMKM(u.id)}
-                      className={`px-3 py-1 rounded-xl font-bold ${u.isVerified ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}
+                      onClick={() => data.toggleStatusAdminUser(u.id)}
+                      className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all ${
+                        u.status === 'Aktif' ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-300 text-slate-700 hover:bg-slate-400'
+                      }`}
                     >
-                      {u.isVerified ? 'Verified' : 'Belum Verifikasi'}
+                      {u.status}
                     </button>
-                    <button onClick={() => data.deleteUMKM(u.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700">
+
+                    <button
+                      onClick={() => setEditingUserItem(u)}
+                      className="p-2 rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 font-bold flex items-center gap-1"
+                      title="Sunting Akun"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (confirm(`Apakah Anda yakin ingin menghapus akun admin @${u.username}?`)) {
+                          data.deleteAdminUser(u.id);
+                        }
+                      }}
+                      className="p-2 rounded-xl bg-rose-100 text-rose-700 hover:bg-rose-200"
+                      title="Hapus Akun"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -896,7 +1530,7 @@ export default function AdminDashboardPage() {
       {/* 1. Modal Add Berita */}
       {showAddNews && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <div className="border-b pb-3 flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
@@ -948,6 +1582,42 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
+                <label className="block font-bold text-slate-700 mb-1">Foto Sampul / Thumbnail Berita</label>
+                <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Unggah Foto dari Perangkat (Galeri HP / Laptop):</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, (url) => setNewsForm({ ...newsForm, imageUrl: url }))}
+                      className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-100 file:text-emerald-800 hover:file:bg-emerald-200 cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Atau Gunakan Link Foto (URL Gambar):</span>
+                    <input
+                      type="url"
+                      placeholder="https://images.unsplash.com/..."
+                      value={newsForm.imageUrl}
+                      onChange={(e) => setNewsForm({ ...newsForm, imageUrl: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-mono text-[11px]"
+                    />
+                  </div>
+                  {newsForm.imageUrl && (
+                    <div className="pt-2 border-t flex items-center gap-3">
+                      <div className="w-20 h-14 rounded-xl overflow-hidden border border-slate-300 shrink-0 bg-slate-200">
+                        <img src={newsForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="text-[11px]">
+                        <span className="font-bold text-emerald-800 block">Preview Foto Terpilih</span>
+                        <span className="text-slate-500">Tampil di beranda & portal berita publik</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
                 <label className="block font-bold text-slate-700 mb-1">Ringkasan Singkat (Lead Paragraph)</label>
                 <textarea
                   rows={2}
@@ -974,6 +1644,124 @@ export default function AdminDashboardPage() {
               <div className="flex justify-end gap-2 pt-2 border-t">
                 <button type="button" onClick={() => setShowAddNews(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
                 <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Terbitkan Berita</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Edit Berita */}
+      {editingNewsItem && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <Edit3 className="w-5 h-5 text-emerald-600" /> Sunting Artikel Berita
+                </h3>
+                <p className="text-[11px] text-slate-500">Perbarui judul, konten, atau foto sampul artikel berita.</p>
+              </div>
+              <button onClick={() => setEditingNewsItem(null)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleEditNewsSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Judul Utama Berita</label>
+                <input
+                  type="text"
+                  required
+                  value={editingNewsItem.title}
+                  onChange={(e) => setEditingNewsItem({ ...editingNewsItem, title: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Kategori Artikel</label>
+                  <select
+                    value={editingNewsItem.category}
+                    onChange={(e) => setEditingNewsItem({ ...editingNewsItem, category: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  >
+                    <option>Pemerintahan</option>
+                    <option>Pertanian</option>
+                    <option>Masyarakat</option>
+                    <option>Kesehatan</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nama Penulis / Redaksi</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingNewsItem.author}
+                    onChange={(e) => setEditingNewsItem({ ...editingNewsItem, author: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Foto Sampul / Thumbnail Berita</label>
+                <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Unggah Foto Baru dari Perangkat:</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, (url) => setEditingNewsItem({ ...editingNewsItem, imageUrl: url }))}
+                      className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-100 file:text-emerald-800 hover:file:bg-emerald-200 cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Atau Ubah Link Foto (URL):</span>
+                    <input
+                      type="url"
+                      value={editingNewsItem.imageUrl}
+                      onChange={(e) => setEditingNewsItem({ ...editingNewsItem, imageUrl: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-mono text-[11px]"
+                    />
+                  </div>
+                  {editingNewsItem.imageUrl && (
+                    <div className="pt-2 border-t flex items-center gap-3">
+                      <div className="w-20 h-14 rounded-xl overflow-hidden border border-slate-300 shrink-0 bg-slate-200">
+                        <img src={editingNewsItem.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="text-[11px]">
+                        <span className="font-bold text-emerald-800 block">Preview Foto Terpilih</span>
+                        <span className="text-slate-500">Tampil di portal berita & beranda publik</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Ringkasan Singkat (Lead Paragraph)</label>
+                <textarea
+                  rows={2}
+                  required
+                  value={editingNewsItem.summary}
+                  onChange={(e) => setEditingNewsItem({ ...editingNewsItem, summary: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Isi Konten Berita Lengkap</label>
+                <textarea
+                  rows={4}
+                  required
+                  value={editingNewsItem.content}
+                  onChange={(e) => setEditingNewsItem({ ...editingNewsItem, content: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setEditingNewsItem(null)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Berita</button>
               </div>
             </form>
           </div>
@@ -1080,116 +1868,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* 3. Modal Add UMKM */}
-      {showAddUMKM && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative">
-            <div className="border-b pb-3 flex justify-between items-center">
-              <div>
-                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
-                  <Store className="w-5 h-5 text-amber-600" /> Form Tambah UMKM Desa
-                </h3>
-                <p className="text-[11px] text-slate-500">Registrasi usaha warga ke Direktori Publik & Pencatatan Keuangan.</p>
-              </div>
-              <button onClick={() => setShowAddUMKM(false)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
-            </div>
 
-            <form onSubmit={handleAddUMKMSubmit} className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Nama Usaha / Merk Toko</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Keripik Singkong Barokah"
-                    value={umkmForm.namaUsaha}
-                    onChange={(e) => setUmkmForm({ ...umkmForm, namaUsaha: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Nama Pemilik Usaha</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Ibu Maryati"
-                    value={umkmForm.pemilik}
-                    onChange={(e) => setUmkmForm({ ...umkmForm, pemilik: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Produk Unggulan Utama</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Keripik Singkong Balado"
-                    value={umkmForm.produkUtama}
-                    onChange={(e) => setUmkmForm({ ...umkmForm, produkUtama: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Estimasi Omzet Bulanan (Rp)</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="4500000"
-                    value={umkmForm.omzetBulanan}
-                    onChange={(e) => setUmkmForm({ ...umkmForm, omzetBulanan: Number(e.target.value) })}
-                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Alamat Dusun / RT / RW</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Dusun Krajan RT 02 / RW 01"
-                    value={umkmForm.alamat}
-                    onChange={(e) => setUmkmForm({ ...umkmForm, alamat: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">No. WhatsApp / Kontak HP</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: 0812-3456-7890"
-                    value={umkmForm.kontak}
-                    onChange={(e) => setUmkmForm({ ...umkmForm, kontak: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Deskripsi Singkat Keunggulan Usaha</label>
-                <textarea
-                  rows={2}
-                  required
-                  placeholder="Deskripsikan keunggulan usaha..."
-                  value={umkmForm.deskripsi}
-                  onChange={(e) => setUmkmForm({ ...umkmForm, deskripsi: e.target.value })}
-                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t">
-                <button type="button" onClick={() => setShowAddUMKM(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
-                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Daftarkan UMKM</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* 4. Modal Add Komoditas Tani */}
       {showAddAgri && (
@@ -1400,28 +2079,57 @@ export default function AdminDashboardPage() {
       {/* 7. Modal Edit APBDes */}
       {showEditAPBDes && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl relative">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <div className="border-b pb-3 flex justify-between items-center">
               <div>
                 <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
-                  <PieChart className="w-5 h-5 text-amber-600" /> Sunting Nominal APBDes 2026
+                  <PieChart className="w-5 h-5 text-emerald-600" /> Sunting Nominal APBDes 2026
                 </h3>
-                <p className="text-[11px] text-slate-500">Perbarui total nominal pendapatan dan belanja desa.</p>
+                <p className="text-[11px] text-slate-500">Perbarui anggaran & realisasi 5 sumber pendapatan dan total belanja.</p>
               </div>
               <button onClick={() => setShowEditAPBDes(false)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
             </div>
 
             <form onSubmit={handleEditAPBDesSubmit} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Total Nominal Pendapatan Desa (Rp)</label>
-                <input
-                  type="number"
-                  required
-                  placeholder="1845000000"
-                  value={apbdesForm.totalPendapatan}
-                  onChange={(e) => setApbdesForm({ ...apbdesForm, totalPendapatan: Number(e.target.value) })}
-                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none font-mono"
-                />
+              
+              <div className="space-y-3 border-b pb-4">
+                <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">Anggaran & Realisasi 5 Sumber Pendapatan:</h4>
+                
+                {apbdesItemsForm.map((item, idx) => (
+                  <div key={idx} className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                    <span className="font-bold text-slate-900 block text-xs">{item.sumber}</span>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[10px] text-slate-500 font-semibold mb-0.5">Nominal Anggaran (Rp)</label>
+                        <input
+                          type="number"
+                          required
+                          value={item.anggaran}
+                          onChange={(e) => {
+                            const newArr = [...apbdesItemsForm];
+                            newArr[idx].anggaran = Number(e.target.value);
+                            setApbdesItemsForm(newArr);
+                          }}
+                          className="w-full p-2.5 rounded-lg border border-slate-300 bg-white font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-slate-500 font-semibold mb-0.5">Nominal Realisasi (Rp)</label>
+                        <input
+                          type="number"
+                          required
+                          value={item.realisasi}
+                          onChange={(e) => {
+                            const newArr = [...apbdesItemsForm];
+                            newArr[idx].realisasi = Number(e.target.value);
+                            setApbdesItemsForm(newArr);
+                          }}
+                          className="w-full p-2.5 rounded-lg border border-slate-300 bg-white font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div>
@@ -1429,9 +2137,9 @@ export default function AdminDashboardPage() {
                 <input
                   type="number"
                   required
-                  placeholder="1812000000"
-                  value={apbdesForm.totalBelanja}
-                  onChange={(e) => setApbdesForm({ ...apbdesForm, totalBelanja: Number(e.target.value) })}
+                  placeholder="1550000000"
+                  value={apbdesBelanjaForm}
+                  onChange={(e) => setApbdesBelanjaForm(Number(e.target.value))}
                   className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none font-mono"
                 />
               </div>
@@ -1439,6 +2147,504 @@ export default function AdminDashboardPage() {
               <div className="flex justify-end gap-2 pt-2 border-t">
                 <button type="button" onClick={() => setShowEditAPBDes(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
                 <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan APBDes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Add Poktan Baru */}
+      {showAddPoktanModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl relative">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <h3 className="font-bold text-base text-slate-900">Tambah Kelompok Tani (Poktan)</h3>
+              <button onClick={() => setShowAddPoktanModal(false)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleAddPoktanSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Nama Kelompok Tani</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Poktan Sidomukti I"
+                  value={poktanForm.nama}
+                  onChange={(e) => setPoktanForm({ ...poktanForm, nama: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Nama Ketua Poktan</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Sukardi"
+                  value={poktanForm.ketua}
+                  onChange={(e) => setPoktanForm({ ...poktanForm, ketua: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Alamat RT / RW / Dusun</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Tlogosari RT22 RW06"
+                  value={poktanForm.alamat}
+                  onChange={(e) => setPoktanForm({ ...poktanForm, alamat: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Jumlah Anggota</label>
+                <input
+                  type="number"
+                  required
+                  value={poktanForm.anggota}
+                  onChange={(e) => setPoktanForm({ ...poktanForm, anggota: Number(e.target.value) })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setShowAddPoktanModal(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Poktan</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 8. Modal Add Aset Balai Desa */}
+      {showAddBalaiAsset && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <Package className="w-5 h-5 text-emerald-600" /> Form Tambah Aset Balai Desa
+                </h3>
+                <p className="text-[11px] text-slate-500">Pendataan barang & inventaris milik Balai Desa yang dapat dipinjam warga.</p>
+              </div>
+              <button onClick={() => setShowAddBalaiAsset(false)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleAddBalaiAssetSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Nama Barang / Aset Inventaris</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Tenda Hajatan (6x12m) / Sound System Portable"
+                  value={balaiAssetForm.namaAset}
+                  onChange={(e) => setBalaiAssetForm({ ...balaiAssetForm, namaAset: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Kategori Barang</label>
+                  <select
+                    value={balaiAssetForm.kategori}
+                    onChange={(e) => setBalaiAssetForm({ ...balaiAssetForm, kategori: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  >
+                    <option>Peralatan Acara & Hajatan</option>
+                    <option>Alat Pertanian Komunal</option>
+                    <option>Mesin & Konstruksi</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Kapasitas / Jumlah Unit</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: 4 Unit / 100 Kursi"
+                    value={balaiAssetForm.kapasitas}
+                    onChange={(e) => setBalaiAssetForm({ ...balaiAssetForm, kapasitas: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Lokasi Gudang Penyimpanan</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Gudang Balai Desa Banyuurip"
+                    value={balaiAssetForm.lokasi}
+                    onChange={(e) => setBalaiAssetForm({ ...balaiAssetForm, lokasi: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Status Ketersediaan Awal</label>
+                  <select
+                    value={balaiAssetForm.status}
+                    onChange={(e) => setBalaiAssetForm({ ...balaiAssetForm, status: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  >
+                    <option value="Tersedia">🟢 Tersedia</option>
+                    <option value="Sedang Dipinjam">🟡 Sedang Dipinjam</option>
+                    <option value="Pemeliharaan">🛠️ Pemeliharaan</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Syarat & Ketentuan Peminjaman</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: KTP Warga Banyuurip & Surat Permohonan H-3 ke Kaur Umum"
+                  value={balaiAssetForm.syarat}
+                  onChange={(e) => setBalaiAssetForm({ ...balaiAssetForm, syarat: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Penanggung Jawab / Kontak Perangkat Desa</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Pak Bambang (Kaur Umum - 0812-3456-7890)"
+                  value={balaiAssetForm.penanggungJawab}
+                  onChange={(e) => setBalaiAssetForm({ ...balaiAssetForm, penanggungJawab: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setShowAddBalaiAsset(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Aset Baru</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 9. Modal Add Indikator Desa Anti Korupsi */}
+      {showAddAntiKorupsiModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative animate-in fade-in zoom-in-95 duration-150">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-600" /> Form Indikator Desa Anti Korupsi
+                </h3>
+                <p className="text-[11px] text-slate-500">Pendataan kriteria integritas KPK & unggah tautan dokumen bukti di Google Drive.</p>
+              </div>
+              <button onClick={() => setShowAddAntiKorupsiModal(false)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleAddAntiKorupsiSubmit} className="space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Kode Indikator</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: IND-06"
+                    value={antiKorupsiForm.kodeIndikator}
+                    onChange={(e) => setAntiKorupsiForm({ ...antiKorupsiForm, kodeIndikator: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Kategori Integritas</label>
+                  <select
+                    value={antiKorupsiForm.kategori}
+                    onChange={(e) => setAntiKorupsiForm({ ...antiKorupsiForm, kategori: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  >
+                    <option>Penataan Tatalaksana</option>
+                    <option>Pengawasan</option>
+                    <option>Pelayanan Publik</option>
+                    <option>Partisipasi Masyarakat</option>
+                    <option>Kearifan Lokal</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Judul Indikator Integritas</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Indikator 6: Penataan Sistem Akuntabilitas & Transparansi"
+                  value={antiKorupsiForm.judul}
+                  onChange={(e) => setAntiKorupsiForm({ ...antiKorupsiForm, judul: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Uraian / Deskripsi Pemenuhan Standar</label>
+                <textarea
+                  rows={3}
+                  required
+                  placeholder="Jelaskan mengenai bukti fisik dan standar pemenuhan indikator antikorupsi..."
+                  value={antiKorupsiForm.deskripsi}
+                  onChange={(e) => setAntiKorupsiForm({ ...antiKorupsiForm, deskripsi: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Link Google Drive Dokumen Bukti (PDF / Folder GDrive)</label>
+                <input
+                  type="url"
+                  required
+                  placeholder="https://drive.google.com/drive/folders/10pKDWF_VgqKaSjPiAsweJlod8Y8a5uy2"
+                  value={antiKorupsiForm.gdriveUrl}
+                  onChange={(e) => setAntiKorupsiForm({ ...antiKorupsiForm, gdriveUrl: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
+                />
+                <span className="text-[10px] text-slate-400 mt-1 block">Masukkan URL Google Drive publik agar warga dapat membaca berkas bukti pemenuhan indikator</span>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setShowAddAntiKorupsiModal(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Indikator</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Add Admin User */}
+      {showAddUser && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-emerald-600" /> Form Tambah Akun Admin Baru
+                </h3>
+                <p className="text-[11px] text-slate-500">Buatkan kredensial login baru untuk Perangkat Desa atau Pengelola Website.</p>
+              </div>
+              <button onClick={() => setShowAddUser(false)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleAddUserSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Nama Lengkap Admin</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Bapak Ir. H. Triyono"
+                  value={userForm.namaLengkap}
+                  onChange={(e) => setUserForm({ ...userForm, namaLengkap: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Username Login</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: kaur_pembangunan"
+                    value={userForm.username}
+                    onChange={(e) => setUserForm({ ...userForm, username: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">Huruf kecil tanpa spasi</span>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Kata Sandi / Password</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: banyuurip2026"
+                    value={userForm.password}
+                    onChange={(e) => setUserForm({ ...userForm, password: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Jabatan / Unit Kerja</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Kaur Pembangunan / Sekdes"
+                    value={userForm.jabatan}
+                    onChange={(e) => setUserForm({ ...userForm, jabatan: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Hak Akses / Peran</label>
+                  <select
+                    value={userForm.role}
+                    onChange={(e) => setUserForm({ ...userForm, role: e.target.value as 'Super Admin' | 'Admin Perangkat Desa' })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  >
+                    <option value="Admin Perangkat Desa">Admin Perangkat Desa</option>
+                    <option value="Super Admin">Super Admin</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Foto Profil / Avatar Admin</label>
+                <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Unggah Foto dari Perangkat:</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, (url) => setUserForm({ ...userForm, avatarUrl: url }))}
+                      className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-100 file:text-emerald-800 hover:file:bg-emerald-200 cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Atau Link Foto URL:</span>
+                    <input
+                      type="url"
+                      placeholder="https://images.unsplash.com/..."
+                      value={userForm.avatarUrl}
+                      onChange={(e) => setUserForm({ ...userForm, avatarUrl: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-mono text-[11px]"
+                    />
+                  </div>
+                  {userForm.avatarUrl && (
+                    <div className="pt-2 border-t flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl overflow-hidden border border-slate-300 shrink-0 bg-slate-200">
+                        <img src={userForm.avatarUrl} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-[11px] font-bold text-emerald-800">Preview Foto Admin</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setShowAddUser(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Daftarkan Admin Baru</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Edit Admin User */}
+      {editingUserItem && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <Edit3 className="w-5 h-5 text-emerald-600" /> Sunting Akun Admin
+                </h3>
+                <p className="text-[11px] text-slate-500">Perbarui username, password, atau jabatan admin.</p>
+              </div>
+              <button onClick={() => setEditingUserItem(null)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleEditUserSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Nama Lengkap Admin</label>
+                <input
+                  type="text"
+                  required
+                  value={editingUserItem.namaLengkap}
+                  onChange={(e) => setEditingUserItem({ ...editingUserItem, namaLengkap: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 font-semibold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Username Login</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingUserItem.username}
+                    onChange={(e) => setEditingUserItem({ ...editingUserItem, username: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
+                    className="w-full p-3 rounded-xl border border-slate-300 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Kata Sandi / Password</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingUserItem.password || ''}
+                    onChange={(e) => setEditingUserItem({ ...editingUserItem, password: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Jabatan / Unit Kerja</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingUserItem.jabatan}
+                    onChange={(e) => setEditingUserItem({ ...editingUserItem, jabatan: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Hak Akses / Peran</label>
+                  <select
+                    value={editingUserItem.role}
+                    onChange={(e) => setEditingUserItem({ ...editingUserItem, role: e.target.value as 'Super Admin' | 'Admin Perangkat Desa' })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  >
+                    <option value="Admin Perangkat Desa">Admin Perangkat Desa</option>
+                    <option value="Super Admin">Super Admin</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Foto Profil / Avatar Admin</label>
+                <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Unggah Foto Baru dari Perangkat:</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, (url) => setEditingUserItem({ ...editingUserItem, avatarUrl: url }))}
+                      className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-100 file:text-emerald-800 hover:file:bg-emerald-200 cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Atau Ubah Link Foto URL:</span>
+                    <input
+                      type="url"
+                      value={editingUserItem.avatarUrl || ''}
+                      onChange={(e) => setEditingUserItem({ ...editingUserItem, avatarUrl: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-mono text-[11px]"
+                    />
+                  </div>
+                  {editingUserItem.avatarUrl && (
+                    <div className="pt-2 border-t flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl overflow-hidden border border-slate-300 shrink-0 bg-slate-200">
+                        <img src={editingUserItem.avatarUrl} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-[11px] font-bold text-emerald-800">Preview Foto Admin</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setEditingUserItem(null)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Perubahan</button>
               </div>
             </form>
           </div>

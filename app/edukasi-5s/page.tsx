@@ -30,7 +30,7 @@ export default async function Edukasi5SPage() {
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-950 text-white p-8 sm:p-12 shadow-xl">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="bg-purple-800/80 text-purple-200 text-xs font-bold px-3 py-1 rounded-full border border-purple-500/40">
-            Digitalisasi Edukasi Budaya 5S Jepang • Muhammad Daffa Fahreza (FIB / Sastra Jepang)
+            Digitalisasi Edukasi Budaya 5S Desa Banyuurip
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight flex items-center gap-3">
             <BookOpenCheck className="w-10 h-10 text-purple-300" />

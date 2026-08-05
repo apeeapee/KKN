@@ -10,7 +10,7 @@ export async function setAdminSession() {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: 60 * 60 * 24, // 24 jam
+    maxAge: 60 * 60 * 24 * 30, // Persistent Session: 30 Hari (tidak langsung logout saat browser/tab ditutup)
   });
 }
 

@@ -75,23 +75,15 @@ export default function UMKMPage() {
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-950 text-white p-8 sm:p-12 shadow-xl">
         <div className="relative z-10 max-w-3xl space-y-4">
           <span className="bg-emerald-800/80 text-emerald-200 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/40">
-            Pendataan Profil & Keuangan Sederhana UMKM • Sekar Ayu Tiara Murti (FEB / Akuntansi)
+            Pendataan Profil & Direktori UMKM • Desa Banyuurip
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight flex items-center gap-3">
             <Store className="w-10 h-10 text-emerald-300" />
-            Katalog & Keuangan UMKM Desa
+            Katalog & Direktori UMKM Desa
           </h1>
           <p className="text-sm sm:text-base text-emerald-100 font-light leading-relaxed">
-            Direktori promosi usaha warga Desa Banyuurip serta pencatatan keuangan sederhana untuk mendukung daya saing UMKM lokal.
+            Direktori promosi produk dan usaha unggulan warga Desa Banyuurip untuk mendukung daya saing UMKM lokal.
           </p>
-
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="bg-white text-emerald-900 hover:bg-emerald-50 font-bold px-5 py-2.5 rounded-xl shadow-md transition-all text-xs inline-flex items-center gap-2"
-          >
-            <PlusCircle className="w-4 h-4 text-emerald-700" />
-            Daftarkan Usaha UMKM Anda
-          </button>
         </div>
       </div>
 
@@ -171,23 +163,6 @@ export default function UMKMPage() {
                   <div className="flex items-center gap-2">
                     <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span>{u.kontak}</span>
-                  </div>
-                </div>
-
-                {/* Financial Highlights */}
-                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-1 text-xs">
-                  <span className="font-bold text-slate-800 flex items-center gap-1 text-[11px]">
-                    <Calculator className="w-3.5 h-3.5 text-emerald-600" /> Visualisasi Keuangan Sederhana:
-                  </span>
-                  <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
-                    <div>
-                      <span className="text-slate-400 block">Omzet Bulanan:</span>
-                      <span className="font-bold text-emerald-700">Rp {u.omzetBulanan.toLocaleString('id-ID')}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 block">Laba Bersih Est.:</span>
-                      <span className="font-bold text-slate-900">Rp {(u.keuanganSimulasi?.labaBersih || u.omzetBulanan * 0.4).toLocaleString('id-ID')}</span>
-                    </div>
                   </div>
                 </div>
               </div>

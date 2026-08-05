@@ -12,6 +12,9 @@
 
   html {
     scroll-behavior: smooth;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    background-color: #022c22;
   }
 
   body {
@@ -19,6 +22,8 @@
     background-color: #f8fafc;
     color: #0f172a;
     overflow-x: hidden;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
   }
 }
 
