@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 const ADMIN_COOKIE_NAME = 'banyuurip_admin_token';
 const ADMIN_SECRET_TOKEN = 'banyuurip_admin_secret_session_2026';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const adminToken = request.cookies.get(ADMIN_COOKIE_NAME)?.value;
 
