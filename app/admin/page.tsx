@@ -722,7 +722,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">SKRINING ISPA</span>
-              <span className="text-2xl font-black text-slate-900 mt-1 block">{data.ispaLogs.length + 2}</span>
+              <span className="text-2xl font-black text-slate-900 mt-1 block">{data.ispaLogs.length}</span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
               <Activity className="w-5 h-5" />
@@ -732,7 +732,9 @@ export default function AdminDashboardPage() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">RISIKO TINGGI</span>
-              <span className="text-2xl font-black text-rose-600 mt-1 block">3</span>
+              <span className="text-2xl font-black text-rose-600 mt-1 block">
+                {data.ispaLogs.filter((log) => log.risiko.toLowerCase().includes('tinggi')).length}
+              </span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
               <AlertTriangle className="w-5 h-5" />
@@ -742,7 +744,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">UMKM TERDAFTAR</span>
-              <span className="text-2xl font-black text-amber-600 mt-1 block">{data.umkmList.length + 5}</span>
+              <span className="text-2xl font-black text-amber-600 mt-1 block">{data.umkmList.length}</span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
               <ShoppingBag className="w-5 h-5" />
@@ -752,7 +754,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">DOKUMEN REGULASI</span>
-              <span className="text-2xl font-black text-slate-900 mt-1 block">{data.legalDocs.length + 5} File</span>
+              <span className="text-2xl font-black text-slate-900 mt-1 block">{data.legalDocs.length} File</span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
               <FileText className="w-5 h-5" />
@@ -762,7 +764,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">WARTA BERITA</span>
-              <span className="text-2xl font-black text-slate-900 mt-1 block">{data.newsList.length + 3} Artikel</span>
+              <span className="text-2xl font-black text-slate-900 mt-1 block">{data.newsList.length} Artikel</span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center">
               <Newspaper className="w-5 h-5" />
@@ -772,7 +774,7 @@ export default function AdminDashboardPage() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">PERANGKAT DESA</span>
-              <span className="text-2xl font-black text-slate-900 mt-1 block">{data.villageProfile.perangkatDesa.length + 7} Jiwa</span>
+              <span className="text-2xl font-black text-slate-900 mt-1 block">{data.villageProfile.perangkatDesa.length} Jiwa</span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
               <Users className="w-5 h-5" />
@@ -782,13 +784,12 @@ export default function AdminDashboardPage() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">DESA ANTIKORUPSI</span>
-              <span className="text-2xl font-black text-emerald-600 mt-1 block">5 Drive</span>
+              <span className="text-2xl font-black text-emerald-600 mt-1 block">{data.antiKorupsiIndikatorList.length} Indikator</span>
             </div>
             <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
               <ShieldCheck className="w-5 h-5" />
             </div>
           </div>
-
         </div>
 
         {/* LOG HASIL SKRINING MANDIRI ISPA TABLE (Custom Floating Dropdown Menu) */}
