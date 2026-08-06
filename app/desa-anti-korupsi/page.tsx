@@ -73,27 +73,27 @@ export default function DesaAntiKorupsiPage() {
             <select
               value={selectedIndikator}
               onChange={(e) => setSelectedIndikator(e.target.value)}
-              className="w-full lg:w-72 p-2.5 rounded-xl border border-slate-300 bg-white font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
+              className="w-full lg:w-80 p-2.5 rounded-xl border border-slate-300 bg-white font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs"
             >
               <option value="Semua">Semua 18 Indikator KPK</option>
-              <option value="IND-01">Indikator 01: Pertanggungjawaban APBDes</option>
-              <option value="IND-02">Indikator 02: Pengawasan & Evaluasi Perangkat</option>
-              <option value="IND-03">Indikator 03: Pengendalian Gratifikasi & Suap</option>
-              <option value="IND-04">Indikator 04: Pengadaan Barang/Jasa Desa</option>
-              <option value="IND-05">Indikator 05: Pakta Integritas Perangkat Desa</option>
-              <option value="IND-06">Indikator 06: Evaluasi Kinerja Perangkat Desa</option>
-              <option value="IND-07">Indikator 07: Tindak Lanjut Hasil Examination</option>
-              <option value="IND-08">Indikator 08: Aparatur Bebas Pidana Korupsi</option>
-              <option value="IND-09">Indikator 09: Layanan Pengaduan WBS</option>
-              <option value="IND-10">Indikator 10: Survei Kepuasan Masyarakat (IKM)</option>
-              <option value="IND-11">Indikator 11: Standar Pelayanan Minimal (SPM)</option>
-              <option value="IND-12">Indikator 12: Media Informasi APBDes</option>
-              <option value="IND-13">Indikator 13: Maklumat Pelayanan</option>
-              <option value="IND-14">Indikator 14: Partisipasi Penyusunan RKP Desa</option>
-              <option value="IND-15">Indikator 15: Kesadaran Mencegah Gratifikasi</option>
-              <option value="IND-16">Indikator 16: Keterlibatan LKD Pembangunan</option>
-              <option value="IND-17">Indikator 17: Budaya Lokal & Hukum Adat</option>
-              <option value="IND-18">Indikator 18: Peran Tokoh Warga & Perempuan</option>
+              <option value="IND-01">1. Perencanaan, Pelaksanaan & APBDes</option>
+              <option value="IND-02">2. Pengawasan & Evaluasi Perangkat Desa</option>
+              <option value="IND-03">3. Pengendalian Gratifikasi, Suap & Konflik Kepentingan</option>
+              <option value="IND-04">4. Perjanjian Kerjasama Pengadaan Barang/Jasa</option>
+              <option value="IND-05">5. Pakta Integritas Perangkat Desa</option>
+              <option value="IND-06">6. Kegiatan Pengawasan & Evaluasi Kinerja</option>
+              <option value="IND-07">7. Tindak Lanjut Hasil Pembinaan & Pengawasan</option>
+              <option value="IND-08">8. Bebas Pidana Korupsi (3 Tahun Terakhir)</option>
+              <option value="IND-09">9. Layanan Pengaduan Masyarakat</option>
+              <option value="IND-10">10. Survei Kepuasan Masyarakat (IKM)</option>
+              <option value="IND-11">11. Keterbukaan & Akses Standar Pelayanan Minimal</option>
+              <option value="IND-12">12. Media Informasi APBDes di Balai Desa</option>
+              <option value="IND-13">13. Maklumat Pelayanan Publik</option>
+              <option value="IND-14">14. Partisipasi Masyarakat Penyusunan RKP Desa</option>
+              <option value="IND-15">15. Kesadaran Masyarakat Mencegah Gratifikasi</option>
+              <option value="IND-16">16. Keterlibatan Lembaga Kemasyarakatan (LKD)</option>
+              <option value="IND-17">17. Budaya Lokal & Hukum Adat Anti Korupsi</option>
+              <option value="IND-18">18. Tokoh Masyarakat, Adat, Pemuda & Perempuan</option>
             </select>
           </div>
 

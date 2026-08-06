@@ -2684,17 +2684,30 @@ export default function AdminDashboardPage() {
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Kategori Integritas</label>
+                  <label className="block font-bold text-slate-700 mb-1">Indikator Integritas (1-18)</label>
                   <select
                     value={antiKorupsiForm.kategori}
                     onChange={(e) => setAntiKorupsiForm({ ...antiKorupsiForm, kategori: e.target.value })}
                     className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                   >
-                    <option>Penataan Tatalaksana</option>
-                    <option>Pengawasan</option>
-                    <option>Pelayanan Publik</option>
-                    <option>Partisipasi Masyarakat</option>
-                    <option>Kearifan Lokal</option>
+                    <option>1. Perencanaan & APBDes</option>
+                    <option>2. Pengawasan & Evaluasi Perangkat</option>
+                    <option>3. Pengendalian Gratifikasi & Suap</option>
+                    <option>4. Kerjasama Pengadaan Barang/Jasa</option>
+                    <option>5. Pakta Integritas</option>
+                    <option>6. Evaluasi Kinerja Perangkat Desa</option>
+                    <option>7. Tindak Lanjut Pengawasan Pemda</option>
+                    <option>8. Bebas Pidana Korupsi (3 Thn)</option>
+                    <option>9. Layanan Pengaduan Masyarakat</option>
+                    <option>10. Survei Kepuasan Masyarakat</option>
+                    <option>11. Akses Standar Pelayanan Minimal</option>
+                    <option>12. Media Informasi APBDes</option>
+                    <option>13. Maklumat Pelayanan</option>
+                    <option>14. Partisipasi RKP Desa</option>
+                    <option>15. Kesadaran Mencegah Gratifikasi</option>
+                    <option>16. Keterlibatan LKD Pembangunan</option>
+                    <option>17. Budaya Lokal Anti Korupsi</option>
+                    <option>18. Tokoh Masyarakat & Perempuan</option>
                   </select>
                 </div>
               </div>
