@@ -621,6 +621,17 @@ export default function AdminDashboardPage() {
 
 
 
+              {/* 5. Direktori UMKM */}
+              <button
+                onClick={() => setActiveMenu('umkm')}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${
+                  activeMenu === 'umkm' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <Store className="w-4 h-4 text-slate-500" />
+                <span>Direktori UMKM</span>
+              </button>
+
               {/* 6. Log Skrining ISPA */}
               <button
                 onClick={() => setActiveMenu('ispa')}
@@ -1401,7 +1412,57 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
+        {/* 9. DIREKTORI UMKM SECTION */}
+        {activeMenu === 'umkm' && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+            <div className="flex justify-between items-center border-b pb-4">
+              <div>
+                <h3 className="font-bold text-lg text-slate-900">Direktori UMKM Desa</h3>
+                <p className="text-xs text-slate-500">Verifikasi usaha warga & peninjauan omzet bulanan.</p>
+              </div>
+              <button
+                onClick={() => setShowAddUMKM(true)}
+                className="bg-slate-950 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" /> Tambah UMKM Baru
+              </button>
+            </div>
 
+            <div className="space-y-3">
+              {data.umkmList.map((u) => (
+                <div key={u.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-4 text-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="w-16 h-12 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300">
+                      <img src={u.imageUrl} alt={u.namaUsaha} className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-900 text-sm">{u.namaUsaha}</h4>
+                      <p className="text-slate-500">Pemilik: <strong>{u.pemilik}</strong> • Omzet: <span className="text-emerald-700 font-bold">Rp {u.omzetBulanan.toLocaleString('id-ID')}</span></p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => data.toggleVerifyUMKM(u.id)}
+                      className={`px-3 py-1.5 rounded-xl font-bold ${u.isVerified ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}
+                    >
+                      {u.isVerified ? 'Verified' : 'Belum Verifikasi'}
+                    </button>
+                    <button
+                      onClick={() => setEditingUMKMItem(u)}
+                      className="p-2 rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 font-bold flex items-center gap-1"
+                      title="Sunting UMKM"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => data.deleteUMKM(u.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700 hover:bg-rose-200">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* 11. KELOLA PENGGUNA & AKUN ADMIN SECTION */}
         {activeMenu === 'users' && (
@@ -1842,6 +1903,292 @@ export default function AdminDashboardPage() {
               <div className="flex justify-end gap-2 pt-2 border-t">
                 <button type="button" onClick={() => setShowAddDoc(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
                 <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Dokumen</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Modal Add UMKM */}
+      {showAddUMKM && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <Store className="w-5 h-5 text-amber-600" /> Form Tambah UMKM Desa
+                </h3>
+                <p className="text-[11px] text-slate-500">Registrasi usaha warga ke Direktori Publik & Pencatatan Keuangan.</p>
+              </div>
+              <button onClick={() => setShowAddUMKM(false)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleAddUMKMSubmit} className="space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nama Usaha / Merk Toko</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Keripik Singkong Barokah"
+                    value={umkmForm.namaUsaha}
+                    onChange={(e) => setUmkmForm({ ...umkmForm, namaUsaha: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nama Pemilik Usaha</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Ibu Maryati"
+                    value={umkmForm.pemilik}
+                    onChange={(e) => setUmkmForm({ ...umkmForm, pemilik: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Produk Unggulan Utama</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Keripik Singkong Balado"
+                    value={umkmForm.produkUtama}
+                    onChange={(e) => setUmkmForm({ ...umkmForm, produkUtama: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Estimasi Omzet Bulanan (Rp)</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="4500000"
+                    value={umkmForm.omzetBulanan}
+                    onChange={(e) => setUmkmForm({ ...umkmForm, omzetBulanan: Number(e.target.value) })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Foto Produk / Banner Toko UMKM</label>
+                <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Unggah Foto dari Perangkat (Galeri HP / Laptop):</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, (url) => setUmkmForm({ ...umkmForm, imageUrl: url }))}
+                      className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Atau Gunakan Link Foto (URL Gambar):</span>
+                    <input
+                      type="url"
+                      placeholder="https://images.unsplash.com/..."
+                      value={umkmForm.imageUrl}
+                      onChange={(e) => setUmkmForm({ ...umkmForm, imageUrl: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-mono text-[11px]"
+                    />
+                  </div>
+                  {umkmForm.imageUrl && (
+                    <div className="pt-2 border-t flex items-center gap-3">
+                      <div className="w-20 h-14 rounded-xl overflow-hidden border border-slate-300 shrink-0 bg-slate-200">
+                        <img src={umkmForm.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="text-[11px]">
+                        <span className="font-bold text-amber-800 block">Preview Foto Produk</span>
+                        <span className="text-slate-500">Tampil di Katalog UMKM Publik</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Alamat Dusun / RT / RW</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: Dusun Krajan RT 02 / RW 01"
+                    value={umkmForm.alamat}
+                    onChange={(e) => setUmkmForm({ ...umkmForm, alamat: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">No. WhatsApp / Kontak HP</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Contoh: 0812-3456-7890"
+                    value={umkmForm.kontak}
+                    onChange={(e) => setUmkmForm({ ...umkmForm, kontak: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Deskripsi Singkat Keunggulan Usaha</label>
+                <textarea
+                  rows={2}
+                  required
+                  placeholder="Deskripsikan keunggulan usaha..."
+                  value={umkmForm.deskripsi}
+                  onChange={(e) => setUmkmForm({ ...umkmForm, deskripsi: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setShowAddUMKM(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Daftarkan UMKM</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Edit UMKM */}
+      {editingUMKMItem && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <Edit3 className="w-5 h-5 text-amber-600" /> Sunting Data UMKM Desa
+                </h3>
+                <p className="text-[11px] text-slate-500">Perbarui rincian usaha, omzet, atau foto produk UMKM.</p>
+              </div>
+              <button onClick={() => setEditingUMKMItem(null)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleEditUMKMSubmit} className="space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nama Usaha / Merk Toko</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingUMKMItem.namaUsaha}
+                    onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, namaUsaha: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nama Pemilik Usaha</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingUMKMItem.pemilik}
+                    onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, pemilik: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Produk Unggulan Utama</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingUMKMItem.produkUtama}
+                    onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, produkUtama: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Estimasi Omzet Bulanan (Rp)</label>
+                  <input
+                    type="number"
+                    required
+                    value={editingUMKMItem.omzetBulanan}
+                    onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, omzetBulanan: Number(e.target.value) })}
+                    className="w-full p-3 rounded-xl border border-slate-300 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Foto Produk / Banner Toko UMKM</label>
+                <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Unggah Foto Baru dari Perangkat:</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, (url) => setEditingUMKMItem({ ...editingUMKMItem, imageUrl: url }))}
+                      className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Atau Ubah Link Foto (URL):</span>
+                    <input
+                      type="url"
+                      value={editingUMKMItem.imageUrl}
+                      onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, imageUrl: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-mono text-[11px]"
+                    />
+                  </div>
+                  {editingUMKMItem.imageUrl && (
+                    <div className="pt-2 border-t flex items-center gap-3">
+                      <div className="w-20 h-14 rounded-xl overflow-hidden border border-slate-300 shrink-0 bg-slate-200">
+                        <img src={editingUMKMItem.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="text-[11px]">
+                        <span className="font-bold text-amber-800 block">Preview Foto Produk</span>
+                        <span className="text-slate-500">Tampil di Katalog UMKM Publik</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Alamat Dusun / RT / RW</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingUMKMItem.alamat}
+                    onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, alamat: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">No. WhatsApp / Kontak HP</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingUMKMItem.kontak}
+                    onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, kontak: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Deskripsi Singkat Keunggulan Usaha</label>
+                <textarea
+                  rows={2}
+                  required
+                  value={editingUMKMItem.deskripsi}
+                  onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, deskripsi: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setEditingUMKMItem(null)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan UMKM</button>
               </div>
             </form>
           </div>
