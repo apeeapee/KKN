@@ -1398,40 +1398,6 @@ export default function AdminDashboardPage() {
                 ))}
               </div>
             </div>
-
-            {/* Part 2: WBS Reports */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-              <div className="border-b pb-4">
-                <h3 className="font-bold text-lg text-slate-900">Laporan Whistleblowing System (WBS) Rahasia</h3>
-                <p className="text-xs text-slate-500">Penanganan pengaduan anonim masyarakat & status tindak lanjut.</p>
-              </div>
-
-              <div className="space-y-4">
-                {data.wbsList.map((wbs) => (
-                  <div key={wbs.id} className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3 text-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
-                        {wbs.kodeLaporan}
-                      </span>
-                      <div className="flex gap-1.5">
-                        {(['Diproses', 'Diverifikasi', 'Selesai'] as const).map((st) => (
-                          <button
-                            key={st}
-                            onClick={() => data.updateWBSStatus(wbs.id, st)}
-                            className={`px-2.5 py-1 rounded-lg font-bold ${wbs.status === st ? 'bg-slate-900 text-white' : 'bg-white border text-slate-600'}`}
-                          >
-                            {st}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <h4 className="font-bold text-sm text-slate-900">{wbs.judulLaporan}</h4>
-                    <p className="text-slate-600 bg-white p-3 rounded-xl border">{wbs.deskripsi}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
           </div>
         )}
 

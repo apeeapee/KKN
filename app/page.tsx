@@ -92,7 +92,7 @@ export default function HomePage() {
     {
       title: "Desa Anti Korupsi",
       author: "Pemerintah Desa Banyuurip",
-      desc: "5 Indikator transparansi integritas KPK & Kanal Whistleblowing System (WBS) pengaduan anonim.",
+      desc: "18 Indikator transparansi integritas KPK & Dokumentasi Resmi Desa Anti Korupsi.",
       icon: Scale,
       href: "/desa-anti-korupsi",
       color: "from-emerald-800 to-teal-950",
