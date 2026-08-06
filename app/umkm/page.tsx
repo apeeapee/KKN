@@ -275,16 +275,7 @@ export default function UMKMPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Estimasi Omzet Bulanan (Rp)</label>
-                <input
-                  type="number"
-                  placeholder="Contoh: 3500000"
-                  value={newForm.omzetBulanan}
-                  onChange={(e) => setNewForm({ ...newForm, omzetBulanan: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                />
-              </div>
+
 
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Deskripsi Singkat Usaha</label>

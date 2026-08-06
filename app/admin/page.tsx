@@ -1418,7 +1418,7 @@ export default function AdminDashboardPage() {
             <div className="flex justify-between items-center border-b pb-4">
               <div>
                 <h3 className="font-bold text-lg text-slate-900">Direktori UMKM Desa</h3>
-                <p className="text-xs text-slate-500">Verifikasi usaha warga & peninjauan omzet bulanan.</p>
+                <p className="text-xs text-slate-500">Verifikasi usaha warga & pendataan katalog produk UMKM.</p>
               </div>
               <button
                 onClick={() => setShowAddUMKM(true)}
@@ -1437,7 +1437,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-900 text-sm">{u.namaUsaha}</h4>
-                      <p className="text-slate-500">Pemilik: <strong>{u.pemilik}</strong> • Omzet: <span className="text-emerald-700 font-bold">Rp {u.omzetBulanan.toLocaleString('id-ID')}</span></p>
+                      <p className="text-slate-500">Pemilik: <strong>{u.pemilik}</strong> • Produk: <span className="text-emerald-700 font-bold">{u.produkUtama}</span></p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1949,29 +1949,16 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Produk Unggulan Utama</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Contoh: Keripik Singkong Balado"
-                    value={umkmForm.produkUtama}
-                    onChange={(e) => setUmkmForm({ ...umkmForm, produkUtama: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Estimasi Omzet Bulanan (Rp)</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="4500000"
-                    value={umkmForm.omzetBulanan}
-                    onChange={(e) => setUmkmForm({ ...umkmForm, omzetBulanan: Number(e.target.value) })}
-                    className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-                  />
-                </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Produk Unggulan Utama</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Keripik Singkong Balado"
+                  value={umkmForm.produkUtama}
+                  onChange={(e) => setUmkmForm({ ...umkmForm, produkUtama: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                />
               </div>
 
               <div>
@@ -2065,7 +2052,7 @@ export default function AdminDashboardPage() {
                 <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
                   <Edit3 className="w-5 h-5 text-amber-600" /> Sunting Data UMKM Desa
                 </h3>
-                <p className="text-[11px] text-slate-500">Perbarui rincian usaha, omzet, atau foto produk UMKM.</p>
+                <p className="text-[11px] text-slate-500">Perbarui rincian usaha, produk unggulan, atau foto produk UMKM.</p>
               </div>
               <button onClick={() => setEditingUMKMItem(null)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
             </div>
@@ -2094,27 +2081,15 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Produk Unggulan Utama</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingUMKMItem.produkUtama}
-                    onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, produkUtama: e.target.value })}
-                    className="w-full p-3 rounded-xl border border-slate-300"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Estimasi Omzet Bulanan (Rp)</label>
-                  <input
-                    type="number"
-                    required
-                    value={editingUMKMItem.omzetBulanan}
-                    onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, omzetBulanan: Number(e.target.value) })}
-                    className="w-full p-3 rounded-xl border border-slate-300 font-mono"
-                  />
-                </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Produk Unggulan Utama</label>
+                <input
+                  type="text"
+                  required
+                  value={editingUMKMItem.produkUtama}
+                  onChange={(e) => setEditingUMKMItem({ ...editingUMKMItem, produkUtama: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
               </div>
 
               <div>
