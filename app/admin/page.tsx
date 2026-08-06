@@ -2324,14 +2324,39 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">URL Foto Profil (Opsional)</label>
-                <input
-                  type="text"
-                  placeholder="https://..."
-                  value={perangkatForm.foto}
-                  onChange={(e) => setPerangkatForm({ ...perangkatForm, foto: e.target.value })}
-                  className="w-full p-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                />
+                <label className="block font-bold text-slate-700 mb-1">Foto Profil Perangkat Desa</label>
+                <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Unggah Foto dari Perangkat (Galeri HP / Laptop):</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, (url) => setPerangkatForm({ ...perangkatForm, foto: url }))}
+                      className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-800 hover:file:bg-indigo-200 cursor-pointer"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-600 block mb-1">Atau Gunakan Link Foto (URL Gambar):</span>
+                    <input
+                      type="url"
+                      placeholder="https://images.unsplash.com/..."
+                      value={perangkatForm.foto}
+                      onChange={(e) => setPerangkatForm({ ...perangkatForm, foto: e.target.value })}
+                      className="w-full p-2.5 rounded-xl border border-slate-300 bg-white font-mono text-[11px]"
+                    />
+                  </div>
+                  {perangkatForm.foto && (
+                    <div className="pt-2 border-t flex items-center gap-3">
+                      <div className="w-14 h-14 rounded-full overflow-hidden border border-slate-300 shrink-0 bg-slate-200">
+                        <img src={perangkatForm.foto} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="text-[11px]">
+                        <span className="font-bold text-indigo-900 block">Preview Foto Profil</span>
+                        <span className="text-slate-500">Tampil di Struktur Perangkat Desa</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-2 border-t">
