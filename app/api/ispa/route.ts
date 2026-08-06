@@ -27,3 +27,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: 'Failed to process request' }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    if (process.env.DATABASE_URL && prisma && id) {
+      await (prisma as any).iSPARecord.delete({
+        where: { id },
+      });
+    }
+    return NextResponse.json({ success: true, message: 'ISPA log deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting ISPA record:', error);
+    return NextResponse.json({ success: false, error: 'Failed to delete record' }, { status: 500 });
+  }
+}

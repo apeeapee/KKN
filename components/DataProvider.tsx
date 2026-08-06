@@ -70,6 +70,7 @@ interface DataContextType {
   deleteAntiKorupsiIndikator: (id: string) => void;
 
   updateISPATindakan: (id: string, tindakan: ISPALogItem['tindakanAdmin']) => void;
+  deleteISPALog: (id: string) => void;
 
   addPerangkatDesa: (p: { nama: string; jabatan: string; foto: string }) => void;
   deletePerangkatDesa: (nama: string) => void;
@@ -275,6 +276,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     saveIspa(ispaLogs.map(i => i.id === id ? { ...i, tindakanAdmin: tindakan } : i));
   };
 
+  const deleteISPALog = (id: string) => {
+    saveIspa(ispaLogs.filter(i => i.id !== id));
+  };
+
   const addPerangkatDesa = (p: { nama: string; jabatan: string; foto: string }) => {
     const updated = {
       ...villageProfile,
@@ -355,6 +360,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       updateAntiKorupsiIndikator,
       deleteAntiKorupsiIndikator,
       updateISPATindakan,
+      deleteISPALog,
       addPerangkatDesa,
       deletePerangkatDesa,
       updateSejarahDesa,

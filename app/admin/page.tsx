@@ -804,6 +804,7 @@ export default function AdminDashboardPage() {
                     <th className="py-3.5 px-4">RISIKO</th>
                     <th className="py-3.5 px-4">TANGGAL INPUT</th>
                     <th className="py-3.5 px-6">TINDAKAN ADMIN</th>
+                    <th className="py-3.5 px-6 text-right">AKSI</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -852,6 +853,19 @@ export default function AdminDashboardPage() {
                             ))}
                           </div>
                         )}
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <button
+                          onClick={() => {
+                            if (confirm(`Hapus data log skrining ISPA atas nama "${log.namaWarga}"?`)) {
+                              data.deleteISPALog(log.id);
+                            }
+                          }}
+                          className="p-2 rounded-xl bg-rose-100 text-rose-700 hover:bg-rose-200 transition-colors inline-flex items-center justify-center"
+                          title="Hapus Log ISPA"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
