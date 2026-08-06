@@ -299,48 +299,7 @@ Nama Banyuurip sendiri memiliki makna bahwa warga masyarakat Kelurahan Banyuurip
   ]
 };
 
-export const mockISPALogs: ISPALogItem[] = [
-  {
-    id: "log-1",
-    namaWarga: "Agus Priyanto",
-    usia: "28 Tahun",
-    risiko: "Rendah",
-    tanggalInput: "24 July 2026",
-    tindakanAdmin: "Edukasi Selesai"
-  },
-  {
-    id: "log-2",
-    namaWarga: "Dewi Sartika",
-    usia: "3 Tahun",
-    risiko: "Sedang",
-    tanggalInput: "24 July 2026",
-    tindakanAdmin: "Pemantauan Kader"
-  },
-  {
-    id: "log-3",
-    namaWarga: "Slamet Rahardjo",
-    usia: "54 Tahun",
-    risiko: "Tinggi",
-    tanggalInput: "24 July 2026",
-    tindakanAdmin: "Dirujuk ke Faskes"
-  },
-  {
-    id: "log-4",
-    namaWarga: "Bapak Suparman",
-    usia: "45 Tahun",
-    risiko: "Tinggi",
-    tanggalInput: "24 July 2026",
-    tindakanAdmin: "Dirujuk ke Faskes"
-  },
-  {
-    id: "log-5",
-    namaWarga: "Agus Priyanto",
-    usia: "28 Tahun",
-    risiko: "Rendah",
-    tanggalInput: "20 July 2026",
-    tindakanAdmin: "Edukasi Selesai"
-  }
-];
+export const mockISPALogs: ISPALogItem[] = [];
 
 export const mockNews: NewsItem[] = [
   {

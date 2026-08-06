@@ -3,18 +3,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { 
-  Building2, 
-  Newspaper, 
-  FileText, 
-  Store, 
-  Sprout, 
-  HeartPulse, 
-  Scale, 
-  LogOut, 
-  Plus, 
-  Trash2, 
-  ShieldCheck, 
+import {
+  Building2,
+  Newspaper,
+  FileText,
+  Store,
+  Sprout,
+  HeartPulse,
+  Scale,
+  LogOut,
+  Plus,
+  Trash2,
+  ShieldCheck,
   ExternalLink,
   Users,
   Activity,
@@ -351,7 +351,7 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     const calculatedTotalPendapatan = apbdesItemsForm.reduce((acc, curr) => acc + Number(curr.anggaran), 0);
     const calculatedTotalRealisasi = apbdesItemsForm.reduce((acc, curr) => acc + Number(curr.realisasi), 0);
-    
+
     const updatedPendapatanList = apbdesItemsForm.map((item) => {
       const angg = Number(item.anggaran) || 1;
       const real = Number(item.realisasi) || 0;
@@ -448,11 +448,11 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col lg:flex-row font-sans">
-      
+
       {/* LEFT SIDEBAR (Butter-Smooth Accordions & Clean Presisi) */}
       <aside className="w-full lg:w-72 bg-white border-r border-slate-200 p-5 flex flex-col justify-between shrink-0">
         <div className="space-y-6">
-          
+
           {/* Logo Header */}
           <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 p-1 flex items-center justify-center shadow-xs">
@@ -466,15 +466,14 @@ export default function AdminDashboardPage() {
 
           {/* Nav Links Container */}
           <div className="space-y-4 text-xs font-bold">
-            
+
             {/* Group UTAMA */}
             <div className="space-y-1">
               <span className="text-[10px] uppercase tracking-wider text-slate-400 font-extrabold px-3 block mb-1">UTAMA</span>
               <button
                 onClick={() => setActiveMenu('ikhtisar')}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full transition-all duration-200 text-xs ${
-                  activeMenu === 'ikhtisar' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
-                }`}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full transition-all duration-200 text-xs ${activeMenu === 'ikhtisar' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
+                  }`}
               >
                 <ClipboardList className="w-4 h-4" />
                 <span>Ikhtisar Data</span>
@@ -484,13 +483,12 @@ export default function AdminDashboardPage() {
             {/* Group KELOLA PORTAL */}
             <div className="space-y-1">
               <span className="text-[10px] uppercase tracking-wider text-slate-400 font-extrabold px-3 block mb-1">KELOLA PORTAL</span>
-              
+
               {/* 1. Kelola Berita */}
               <button
                 onClick={() => setActiveMenu('berita')}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${
-                  activeMenu === 'berita' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
-                }`}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${activeMenu === 'berita' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
+                  }`}
               >
                 <Newspaper className="w-4 h-4 text-slate-500" />
                 <span>Kelola Berita</span>
@@ -514,18 +512,16 @@ export default function AdminDashboardPage() {
                   <div className="pl-7 space-y-1 border-l-2 border-slate-100 ml-4">
                     <button
                       onClick={() => setActiveMenu('sejarah')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${
-                        activeMenu === 'sejarah' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                      }`}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${activeMenu === 'sejarah' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        }`}
                     >
                       <History className="w-3.5 h-3.5 text-slate-400" />
                       <span>Kelola Sejarah</span>
                     </button>
                     <button
                       onClick={() => setActiveMenu('perangkat')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${
-                        activeMenu === 'perangkat' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                      }`}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${activeMenu === 'perangkat' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        }`}
                     >
                       <Users className="w-3.5 h-3.5 text-slate-400" />
                       <span>Perangkat Desa</span>
@@ -552,18 +548,16 @@ export default function AdminDashboardPage() {
                   <div className="pl-7 space-y-1 border-l-2 border-slate-100 ml-4">
                     <button
                       onClick={() => setActiveMenu('komoditas')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${
-                        activeMenu === 'komoditas' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                      }`}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${activeMenu === 'komoditas' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        }`}
                     >
                       <Wheat className="w-3.5 h-3.5 text-slate-400" />
                       <span>Komoditas Tani</span>
                     </button>
                     <button
                       onClick={() => setActiveMenu('aset_tani')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${
-                        activeMenu === 'aset_tani' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                      }`}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${activeMenu === 'aset_tani' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        }`}
                     >
                       <Package className="w-3.5 h-3.5 text-slate-400" />
                       <span>Peminjaman Aset Balai Desa</span>
@@ -590,27 +584,24 @@ export default function AdminDashboardPage() {
                   <div className="pl-7 space-y-1 border-l-2 border-slate-100 ml-4">
                     <button
                       onClick={() => setActiveMenu('regulasi')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${
-                        activeMenu === 'regulasi' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                      }`}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${activeMenu === 'regulasi' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        }`}
                     >
                       <FileCheck className="w-3.5 h-3.5 text-slate-400" />
                       <span>Regulasi Hukum</span>
                     </button>
                     <button
                       onClick={() => setActiveMenu('apbdes')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${
-                        activeMenu === 'apbdes' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                      }`}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${activeMenu === 'apbdes' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        }`}
                     >
                       <PieChart className="w-3.5 h-3.5 text-slate-400" />
                       <span>Anggaran APBDes</span>
                     </button>
                     <button
                       onClick={() => setActiveMenu('antikorupsi')}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${
-                        activeMenu === 'antikorupsi' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                      }`}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 ${activeMenu === 'antikorupsi' ? 'bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600 pl-3.5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        }`}
                     >
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                       <span className="text-emerald-700 font-bold">Desa Antikorupsi</span>
@@ -624,9 +615,8 @@ export default function AdminDashboardPage() {
               {/* 5. Direktori UMKM */}
               <button
                 onClick={() => setActiveMenu('umkm')}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${
-                  activeMenu === 'umkm' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
-                }`}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${activeMenu === 'umkm' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
+                  }`}
               >
                 <Store className="w-4 h-4 text-slate-500" />
                 <span>Direktori UMKM</span>
@@ -635,9 +625,8 @@ export default function AdminDashboardPage() {
               {/* 6. Log Skrining ISPA */}
               <button
                 onClick={() => setActiveMenu('ispa')}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${
-                  activeMenu === 'ispa' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
-                }`}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${activeMenu === 'ispa' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
+                  }`}
               >
                 <HeartPulse className="w-4 h-4 text-slate-500" />
                 <span>Log Skrining ISPA</span>
@@ -646,9 +635,8 @@ export default function AdminDashboardPage() {
               {/* 7. Kelola Pengguna & Akun Admin */}
               <button
                 onClick={() => setActiveMenu('users')}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${
-                  activeMenu === 'users' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
-                }`}
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 ${activeMenu === 'users' ? 'bg-slate-950 text-white shadow-md' : 'text-slate-700 hover:bg-slate-100'
+                  }`}
               >
                 <Users className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span className="font-bold">Kelola Akun Admin</span>
@@ -683,7 +671,7 @@ export default function AdminDashboardPage() {
 
       {/* RIGHT MAIN CONTENT AREA */}
       <main className="flex-1 p-6 lg:p-10 space-y-8 overflow-x-hidden">
-        
+
         {/* Top Header Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
@@ -795,7 +783,7 @@ export default function AdminDashboardPage() {
         {/* LOG HASIL SKRINING MANDIRI ISPA TABLE (Custom Floating Dropdown Menu) */}
         {(activeMenu === 'ikhtisar' || activeMenu === 'ispa') && (
           <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-visible">
-            
+
             <div className="p-6 border-b border-slate-100 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
                 <ClipboardList className="w-5 h-5 text-indigo-600" />
@@ -852,9 +840,8 @@ export default function AdminDashboardPage() {
                                   data.updateISPATindakan(log.id, opt);
                                   setActiveActionDropdownId(null);
                                 }}
-                                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors ${
-                                  log.tindakanAdmin === opt ? 'bg-slate-100 font-bold text-slate-900' : 'hover:bg-slate-50 text-slate-700'
-                                }`}
+                                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors ${log.tindakanAdmin === opt ? 'bg-slate-100 font-bold text-slate-900' : 'hover:bg-slate-50 text-slate-700'
+                                  }`}
                               >
                                 <span className="flex items-center gap-2">
                                   <span className={`w-2 h-2 rounded-full ${getTindakanDot(opt)}`}></span>
@@ -1060,7 +1047,7 @@ export default function AdminDashboardPage() {
             {/* Sub-tab 2: 9 Poktan & Gapoktan */}
             {agriSubTab === 'poktan' && (
               <div className="space-y-6">
-                
+
                 {/* Gapoktan Form Card */}
                 <div className="bg-emerald-50/80 p-5 rounded-2xl border border-emerald-200 space-y-3 text-xs">
                   <div className="flex justify-between items-center">
@@ -1246,9 +1233,8 @@ export default function AdminDashboardPage() {
                     <select
                       value={aset.status}
                       onChange={(e) => data.updateBalaiDesaAssetStatus(aset.id, e.target.value)}
-                      className={`p-2 rounded-xl border text-xs font-bold ${
-                        aset.status === 'Tersedia' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300'
-                      }`}
+                      className={`p-2 rounded-xl border text-xs font-bold ${aset.status === 'Tersedia' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300'
+                        }`}
                     >
                       <option value="Tersedia">Tersedia</option>
                       <option value="Sedang Dipinjam">Sedang Dipinjam</option>
@@ -1367,7 +1353,7 @@ export default function AdminDashboardPage() {
         {/* 8. DESA ANTIKORUPSI SECTION */}
         {activeMenu === 'antikorupsi' && (
           <div className="space-y-6">
-            
+
             {/* Part 1: Indikator & Dokumen GDrive */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
               <div className="flex justify-between items-center border-b pb-4">
@@ -1524,17 +1510,15 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={`px-2.5 py-1 rounded-xl text-[10px] font-bold ${
-                      u.role === 'Super Admin' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-blue-100 text-blue-800 border border-blue-300'
-                    }`}>
+                    <span className={`px-2.5 py-1 rounded-xl text-[10px] font-bold ${u.role === 'Super Admin' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-blue-100 text-blue-800 border border-blue-300'
+                      }`}>
                       {u.role}
                     </span>
 
                     <button
                       onClick={() => data.toggleStatusAdminUser(u.id)}
-                      className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all ${
-                        u.status === 'Aktif' ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-300 text-slate-700 hover:bg-slate-400'
-                      }`}
+                      className={`px-3 py-1 rounded-xl text-[11px] font-bold transition-all ${u.status === 'Aktif' ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-300 text-slate-700 hover:bg-slate-400'
+                        }`}
                     >
                       {u.status}
                     </button>
@@ -2419,10 +2403,10 @@ export default function AdminDashboardPage() {
             </div>
 
             <form onSubmit={handleEditAPBDesSubmit} className="space-y-4 text-xs">
-              
+
               <div className="space-y-3 border-b pb-4">
                 <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">Anggaran & Realisasi 5 Sumber Pendapatan:</h4>
-                
+
                 {apbdesItemsForm.map((item, idx) => (
                   <div key={idx} className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
                     <span className="font-bold text-slate-900 block text-xs">{item.sumber}</span>
