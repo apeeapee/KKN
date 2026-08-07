@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   title: 'Desa Banyuurip - Digital Gateway & Portal Resmi Desa',
   description: 'Portal Web Resmi Desa Banyuurip, Kec. Klego, Kab. Boyolali. Menampilkan Profil Desa, Potensi Pertanian, E-Book & Skrining ISPA RESPIRA, JDIH Hukum Desa, Transparansi APBDes, & Katalog UMKM.',
   keywords: ['Desa Banyuurip', 'Boyolali', 'Digital Gateway Desa', 'Profil Desa', 'ISPA RESPIRA', 'Pertanian Boyolali', 'JDIH Desa', 'APBDes Banyuurip', 'UMKM Banyuurip'],
+  icons: {
+    icon: '/logo-boyolali.png',
+    shortcut: '/logo-boyolali.png',
+    apple: '/logo-boyolali.png',
+  },
 };
 
 export default function RootLayout({
