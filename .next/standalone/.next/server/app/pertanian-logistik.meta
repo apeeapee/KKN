@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/pertanian-logistik/layout,_N_T_/pertanian-logistik/page,_N_T_/pertanian-logistik"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/pertanian-logistik/__PAGE__",
+    "/pertanian-logistik",
+    "/_index",
+    "/_head"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/jdih-hukum/layout,_N_T_/jdih-hukum/page,_N_T_/jdih-hukum"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/jdih-hukum/__PAGE__",
+    "/jdih-hukum",
+    "/_index",
+    "/_head"
+  ]
+}

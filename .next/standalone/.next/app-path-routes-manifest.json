@@ -1,0 +1,22 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/_global-error/page": "/_global-error",
+  "/api/anti-korupsi/route": "/api/anti-korupsi",
+  "/api/auth/login/route": "/api/auth/login",
+  "/api/auth/logout/route": "/api/auth/logout",
+  "/api/ispa/route": "/api/ispa",
+  "/api/umkm/route": "/api/umkm",
+  "/favicon.ico/route": "/favicon.ico",
+  "/admin/page": "/admin",
+  "/apbdes-pajak/page": "/apbdes-pajak",
+  "/berita/page": "/berita",
+  "/desa-anti-korupsi/page": "/desa-anti-korupsi",
+  "/edukasi-5s/page": "/edukasi-5s",
+  "/jdih-hukum/page": "/jdih-hukum",
+  "/kesehatan-respira/page": "/kesehatan-respira",
+  "/login/page": "/login",
+  "/page": "/",
+  "/pertanian-logistik/page": "/pertanian-logistik",
+  "/profil/page": "/profil",
+  "/umkm/page": "/umkm"
+}

@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/anti-korupsi/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"/Users/apee/Documents/kkn/banyuurip/app/api/anti-korupsi/route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};

@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/desa-anti-korupsi/layout,_N_T_/desa-anti-korupsi/page,_N_T_/desa-anti-korupsi"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/desa-anti-korupsi/__PAGE__",
+    "/desa-anti-korupsi",
+    "/_index",
+    "/_head"
+  ]
+}
