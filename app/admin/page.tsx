@@ -34,7 +34,7 @@ import {
   Package
 } from 'lucide-react';
 import { useData } from '@/components/DataProvider';
-import { ISPALogItem, NewsItem, UMKMItem, AdminUser } from '@/lib/mock-data';
+import { ISPALogItem, NewsItem, UMKMItem, AdminUser, LegalDocument, IndikatorAntiKorupsiItem } from '@/lib/mock-data';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -60,6 +60,7 @@ export default function AdminDashboardPage() {
 
   const [showAddDoc, setShowAddDoc] = useState(false);
   const [docForm, setDocForm] = useState({ nomor: '', tahun: 2026, judul: '', kategori: 'Perdes', deskripsi: '', fileUrl: '#', tglTerbit: '2026-01-15', status: 'Berlaku' });
+  const [editingLegalDocItem, setEditingLegalDocItem] = useState<LegalDocument | null>(null);
 
   const [showAddUMKM, setShowAddUMKM] = useState(false);
   const [umkmForm, setUmkmForm] = useState({ namaUsaha: '', pemilik: '', kategori: 'Kuliner', deskripsi: '', alamat: '', kontak: '', omzetBulanan: 3000000, produkUtama: '', imageUrl: '' });
@@ -109,6 +110,7 @@ export default function AdminDashboardPage() {
     gdriveUrl: '',
     tahun: 2026
   });
+  const [editingAntiKorupsiItem, setEditingAntiKorupsiItem] = useState<IndikatorAntiKorupsiItem | null>(null);
 
   const [showAddPerangkat, setShowAddPerangkat] = useState(false);
   const [perangkatForm, setPerangkatForm] = useState({ nama: '', jabatan: '', foto: '' });
@@ -204,6 +206,22 @@ export default function AdminDashboardPage() {
     setShowAddDoc(false);
     setDocForm({ nomor: '', tahun: 2026, judul: '', kategori: 'Perdes', deskripsi: '', fileUrl: '#', tglTerbit: '2026-01-15', status: 'Berlaku' });
     alert('Dokumen regulasi hukum baru berhasil disimpan di database JDIH!');
+  };
+
+  const handleEditLegalDocSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingLegalDocItem) return;
+    data.updateLegalDoc(editingLegalDocItem.id, {
+      nomor: editingLegalDocItem.nomor,
+      tahun: Number(editingLegalDocItem.tahun),
+      judul: editingLegalDocItem.judul,
+      kategori: editingLegalDocItem.kategori,
+      deskripsi: editingLegalDocItem.deskripsi,
+      fileUrl: editingLegalDocItem.fileUrl,
+      status: editingLegalDocItem.status
+    });
+    setEditingLegalDocItem(null);
+    alert('Dokumen regulasi hukum berhasil diperbarui!');
   };
 
   const handleAddUMKMSubmit = (e: React.FormEvent) => {
@@ -326,6 +344,22 @@ export default function AdminDashboardPage() {
       tahun: 2026
     });
     alert('Indikator Integritas Desa Anti Korupsi baru berhasil disimpan!');
+  };
+
+  const handleEditAntiKorupsiSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAntiKorupsiItem) return;
+    data.updateAntiKorupsiIndikator(editingAntiKorupsiItem.id, {
+      kodeIndikator: editingAntiKorupsiItem.kodeIndikator,
+      judul: editingAntiKorupsiItem.judul,
+      kategori: editingAntiKorupsiItem.kategori,
+      deskripsi: editingAntiKorupsiItem.deskripsi,
+      gdriveUrl: editingAntiKorupsiItem.gdriveUrl,
+      status: editingAntiKorupsiItem.status,
+      tahun: Number(editingAntiKorupsiItem.tahun)
+    });
+    setEditingAntiKorupsiItem(null);
+    alert('Indikator Integritas Anti Korupsi berhasil diperbarui!');
   };
 
   const handleAddPerangkatSubmit = (e: React.FormEvent) => {
@@ -1273,9 +1307,18 @@ export default function AdminDashboardPage() {
                     <h4 className="font-bold text-slate-900 mt-1 text-sm">{doc.judul}</h4>
                     <p className="text-slate-500">Nomor: {doc.nomor} • {doc.deskripsi}</p>
                   </div>
-                  <button onClick={() => data.deleteLegalDoc(doc.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingLegalDocItem(doc)}
+                      className="p-2 rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 font-bold flex items-center gap-1"
+                      title="Sunting Dokumen JDIH"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => data.deleteLegalDoc(doc.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700 hover:bg-rose-200">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1389,9 +1432,18 @@ export default function AdminDashboardPage() {
                         </a>
                       )}
                     </div>
-                    <button onClick={() => data.deleteAntiKorupsiIndikator(ind.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700 shrink-0">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => setEditingAntiKorupsiItem(ind)}
+                        className="p-2 rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 font-bold flex items-center gap-1"
+                        title="Sunting Indikator Anti Korupsi"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => data.deleteAntiKorupsiIndikator(ind.id)} className="p-2 rounded-xl bg-rose-100 text-rose-700 hover:bg-rose-200">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1888,6 +1940,100 @@ export default function AdminDashboardPage() {
               <div className="flex justify-end gap-2 pt-2 border-t">
                 <button type="button" onClick={() => setShowAddDoc(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
                 <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Dokumen</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Edit Regulasi Hukum JDIH */}
+      {editingLegalDocItem && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <Edit3 className="w-5 h-5 text-blue-600" /> Sunting Dokumen Peraturan Desa (JDIH)
+                </h3>
+                <p className="text-[11px] text-slate-500">Perbarui nomor, judul, uraian, atau tautan berkas PDF.</p>
+              </div>
+              <button onClick={() => setEditingLegalDocItem(null)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleEditLegalDocSubmit} className="space-y-4 text-xs">
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nomor Peraturan</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingLegalDocItem.nomor}
+                    onChange={(e) => setEditingLegalDocItem({ ...editingLegalDocItem, nomor: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Kategori Peraturan</label>
+                  <select
+                    value={editingLegalDocItem.kategori}
+                    onChange={(e) => setEditingLegalDocItem({ ...editingLegalDocItem, kategori: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  >
+                    <option>Perdes</option>
+                    <option>Perkades</option>
+                    <option>Keputusan Kades</option>
+                    <option>RPJMDes</option>
+                    <option>APBDes</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Tahun</label>
+                  <input
+                    type="number"
+                    required
+                    value={editingLegalDocItem.tahun}
+                    onChange={(e) => setEditingLegalDocItem({ ...editingLegalDocItem, tahun: Number(e.target.value) })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Judul Lengkap Dokumen Peraturan</label>
+                <input
+                  type="text"
+                  required
+                  value={editingLegalDocItem.judul}
+                  onChange={(e) => setEditingLegalDocItem({ ...editingLegalDocItem, judul: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Uraian / Ringkasan Pokok Aturan</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={editingLegalDocItem.deskripsi}
+                  onChange={(e) => setEditingLegalDocItem({ ...editingLegalDocItem, deskripsi: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Link Google Drive Dokumen (PDF Resmi)</label>
+                <input
+                  type="url"
+                  required
+                  value={editingLegalDocItem.fileUrl}
+                  onChange={(e) => setEditingLegalDocItem({ ...editingLegalDocItem, fileUrl: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 font-mono"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setEditingLegalDocItem(null)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Perubahan</button>
               </div>
             </form>
           </div>
@@ -2736,6 +2882,103 @@ export default function AdminDashboardPage() {
               <div className="flex justify-end gap-2 pt-2 border-t">
                 <button type="button" onClick={() => setShowAddAntiKorupsiModal(false)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
                 <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Indikator</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Edit Desa Anti Korupsi */}
+      {editingAntiKorupsiItem && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div className="border-b pb-3 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <Edit3 className="w-5 h-5 text-emerald-600" /> Sunting Indikator Anti Korupsi
+                </h3>
+                <p className="text-[11px] text-slate-500">Perbarui rincian indikator, judul, uraian, atau tautan Google Drive.</p>
+              </div>
+              <button onClick={() => setEditingAntiKorupsiItem(null)} className="p-1.5 rounded-full hover:bg-slate-100"><X className="w-4 h-4" /></button>
+            </div>
+
+            <form onSubmit={handleEditAntiKorupsiSubmit} className="space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Kode Indikator</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingAntiKorupsiItem.kodeIndikator}
+                    onChange={(e) => setEditingAntiKorupsiItem({ ...editingAntiKorupsiItem, kodeIndikator: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Indikator Integritas (1-18)</label>
+                  <select
+                    value={editingAntiKorupsiItem.kategori}
+                    onChange={(e) => setEditingAntiKorupsiItem({ ...editingAntiKorupsiItem, kategori: e.target.value })}
+                    className="w-full p-3 rounded-xl border border-slate-300"
+                  >
+                    <option>1. Perencanaan & APBDes</option>
+                    <option>2. Pengawasan & Evaluasi Perangkat</option>
+                    <option>3. Pengendalian Gratifikasi & Suap</option>
+                    <option>4. Kerjasama Pengadaan Barang/Jasa</option>
+                    <option>5. Pakta Integritas</option>
+                    <option>6. Evaluasi Kinerja Perangkat Desa</option>
+                    <option>7. Tindak Lanjut Pengawasan Pemda</option>
+                    <option>8. Bebas Pidana Korupsi (3 Thn)</option>
+                    <option>9. Layanan Pengaduan Masyarakat</option>
+                    <option>10. Survei Kepuasan Masyarakat</option>
+                    <option>11. Akses Standar Pelayanan Minimal</option>
+                    <option>12. Media Informasi APBDes</option>
+                    <option>13. Maklumat Pelayanan</option>
+                    <option>14. Partisipasi RKP Desa</option>
+                    <option>15. Kesadaran Mencegah Gratifikasi</option>
+                    <option>16. Keterlibatan LKD Pembangunan</option>
+                    <option>17. Budaya Lokal Anti Korupsi</option>
+                    <option>18. Tokoh Masyarakat & Perempuan</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Judul Indikator Integritas</label>
+                <input
+                  type="text"
+                  required
+                  value={editingAntiKorupsiItem.judul}
+                  onChange={(e) => setEditingAntiKorupsiItem({ ...editingAntiKorupsiItem, judul: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Uraian / Deskripsi Pemenuhan Standar</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={editingAntiKorupsiItem.deskripsi}
+                  onChange={(e) => setEditingAntiKorupsiItem({ ...editingAntiKorupsiItem, deskripsi: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Link Google Drive Dokumen Bukti (PDF / Folder GDrive)</label>
+                <input
+                  type="url"
+                  required
+                  value={editingAntiKorupsiItem.gdriveUrl}
+                  onChange={(e) => setEditingAntiKorupsiItem({ ...editingAntiKorupsiItem, gdriveUrl: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-slate-300 font-mono"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <button type="button" onClick={() => setEditingAntiKorupsiItem(null)} className="px-4 py-2.5 rounded-xl bg-slate-100 font-bold">Batal</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl bg-slate-950 text-white font-bold">Simpan Perubahan</button>
               </div>
             </form>
           </div>
