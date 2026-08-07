@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 generator client {
@@ -21,11 +21,11 @@ model Berita {
   title     String
   slug      String   @unique
   category  String
-  summary   String
-  content   String
+  summary   String   @db.Text
+  content   String   @db.Text
   author    String
   date      DateTime @default(now())
-  imageUrl  String?
+  imageUrl  String?  @db.Text
   views     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -35,10 +35,10 @@ model DokumenHukum {
   id          String   @id @default(uuid())
   nomor       String
   tahun       Int
-  judul       String
+  judul       String   @db.Text
   kategori    String   // Perdes, Perkades, Keputusan Kades, RPJMDes, APBDes
-  deskripsi   String
-  fileUrl     String?
+  deskripsi   String   @db.Text
+  fileUrl     String?  @db.Text
   tglTerbit   DateTime
   status      String   @default("Berlaku")
   createdAt   DateTime @default(now())
@@ -49,12 +49,12 @@ model UMKM {
   namaUsaha    String
   pemilik      String
   kategori     String   // Kuliner, Pertanian, Kerajinan, Jasa
-  deskripsi    String
-  alamat       String
+  deskripsi    String   @db.Text
+  alamat       String   @db.Text
   kontak       String
   omzetBulanan Float?
   produkUtama  String
-  imageUrl     String?
+  imageUrl     String?  @db.Text
   isVerified   Boolean  @default(true)
   createdAt    DateTime @default(now())
 }
@@ -78,10 +78,10 @@ model ISPARecord {
   nama             String
   usia             Int
   dusun            String
-  gejala           String   // JSON string of symptoms
+  gejala           String   @db.Text // JSON string of symptoms
   skorRisiko       Int
   kategoriRisiko   String   // Rendah, Sedang, Tinggi
-  rekomendasi      String
+  rekomendasi      String   @db.Text
   createdAt        DateTime @default(now())
 }
 
@@ -92,15 +92,15 @@ model APBDesEntry {
   subsektor  String
   anggaran   Float
   realisasi  Float
-  keterangan String?
+  keterangan String?  @db.Text
 }
 
 model LaporanAntiKorupsi {
   id             String   @id @default(uuid())
   kodeLaporan    String   @unique
-  judulLaporan   String
+  judulLaporan   String   @db.Text
   kategori       String   // Pelayanan Publik, Pungli, Transparansi Anggaran, Lainnya
-  deskripsi      String
+  deskripsi      String   @db.Text
   lokasiKejadian String
   isAnonim       Boolean  @default(true)
   namaPelapor    String?
