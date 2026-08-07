@@ -3,10 +3,10 @@
 @layer base {
   :root {
     --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    --emerald-primary: #059669;
-    --emerald-dark: #064e3b;
-    --emerald-light: #d1fae5;
-    --cyan-accent: #0891b2;
+    --blue-primary: #0284c7;
+    --blue-dark: #0f172a;
+    --blue-light: #e0f2fe;
+    --cyan-accent: #06b6d4;
     --gold-accent: #d97706;
   }
 
@@ -14,7 +14,7 @@
     scroll-behavior: smooth;
     overscroll-behavior: none;
     overscroll-behavior-y: none;
-    background-color: #022c22;
+    background-color: #0f172a;
   }
 
   body {
@@ -41,7 +41,7 @@
 }
 
 .gradient-hero {
-  background: linear-gradient(135deg, #064e3b 0%, #047857 40%, #0e7490 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #0369a1 50%, #0891b2 100%);
 }
 
 .gradient-card {
@@ -53,15 +53,15 @@
 }
 
 .gradient-emerald {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
 }
 
 .shadow-glow {
-  box-shadow: 0 10px 30px -10px rgba(5, 150, 105, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(2, 132, 199, 0.35);
 }
 
 .shadow-glow-cyan {
-  box-shadow: 0 10px 30px -10px rgba(8, 145, 178, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(8, 145, 178, 0.35);
 }
 
 /* Dynamic Animation Utilities */

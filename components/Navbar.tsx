@@ -52,16 +52,16 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all duration-300">
       {/* Top Banner */}
-      <div className="bg-emerald-950 text-white text-xs py-1.5 px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 border-b border-emerald-800">
+      <div className="bg-slate-950 text-white text-xs py-1.5 px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-2 border-b border-sky-900">
         <div className="flex items-center gap-2">
-          <span className="bg-emerald-700 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase">Portal Resmi</span>
+          <span className="bg-sky-700 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase">Portal Resmi</span>
           <span>Desa Banyuurip, Kecamatan Klego, Kabupaten Boyolali</span>
         </div>
-        <div className="flex items-center gap-4 text-emerald-200 text-xs">
+        <div className="flex items-center gap-4 text-sky-200 text-xs">
           <span>Jam Pelayanan: Senin - Jumat (08.00 - 14.00 WIB)</span>
           <span className="hidden md:inline">|</span>
-          <Link href="/login" className="text-emerald-300 hover:text-white font-bold flex items-center gap-1 underline underline-offset-2">
-            <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <Link href="/login" className="text-sky-300 hover:text-white font-bold flex items-center gap-1 underline underline-offset-2">
+            <UserCheck className="w-3.5 h-3.5 text-sky-400" />
             Login Admin Perangkat Desa
           </Link>
         </div>
@@ -136,8 +136,8 @@ export default function Navbar() {
                   href={link.href}
                   className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                     active 
-                      ? 'bg-emerald-700 text-white shadow-xs' 
-                      : 'text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70'
+                      ? 'bg-sky-700 text-white shadow-xs' 
+                      : 'text-slate-700 hover:text-sky-700 hover:bg-sky-50/70'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5 shrink-0" />
