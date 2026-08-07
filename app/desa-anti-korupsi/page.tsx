@@ -115,7 +115,7 @@ export default function DesaAntiKorupsiPage() {
           <span>Status: Terpenuhi 100% KPK</span>
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-4 max-h-[650px] overflow-y-auto pr-2">
           {antiKorupsiIndikatorList
             .filter((doc) => {
               const matchesSearch = doc.judul.toLowerCase().includes(searchQuery.toLowerCase()) ||
