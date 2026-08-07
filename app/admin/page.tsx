@@ -484,7 +484,7 @@ export default function AdminDashboardPage() {
     <div className="min-h-screen bg-slate-100 text-slate-800 flex flex-col lg:flex-row font-sans">
 
       {/* LEFT SIDEBAR (Butter-Smooth Accordions & Clean Presisi) */}
-      <aside className="w-full lg:w-72 bg-white border-r border-slate-200 p-5 flex flex-col justify-between shrink-0 lg:sticky lg:top-0 lg:h-screen overflow-y-auto">
+      <aside className="w-full lg:w-72 bg-white border-r border-slate-200 p-5 flex flex-col justify-between shrink-0 lg:sticky lg:top-0">
         <div className="space-y-6">
 
           {/* Logo Header */}
@@ -927,7 +927,7 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
               {data.newsList.map((n) => (
                 <div key={n.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-4 text-xs">
                   <div className="flex items-center gap-3">
@@ -1061,7 +1061,7 @@ export default function AdminDashboardPage() {
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
                   {data.agriData.komoditas.map((k) => (
                     <div key={k.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
                       <div>
@@ -1111,7 +1111,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* 9 Poktan List */}
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
                   <div className="flex justify-between items-center">
                     <h4 className="font-bold text-sm text-slate-900">Daftar 9 Kelompok Tani (Poktan) Terdaftar</h4>
                     <button
@@ -1255,7 +1255,7 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
               {data.agriData.logistikAset.map((aset) => (
                 <div key={aset.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
                   <div>
@@ -1299,7 +1299,7 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
               {data.legalDocs.map((doc) => (
                 <div key={doc.id} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-4 text-xs">
                   <div>
@@ -1364,7 +1364,7 @@ export default function AdminDashboardPage() {
             {/* 5 Revenue Items Table */}
             <div className="space-y-3">
               <h4 className="font-bold text-xs text-slate-500 uppercase tracking-wider">Rincian 5 Sumber Pendapatan Desa</h4>
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-[600px] overflow-y-auto pr-2">
                 {(data.apbdesData.pendapatan || []).map((item, idx) => (
                   <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-4 text-xs">
                     <div className="flex items-center gap-3">
