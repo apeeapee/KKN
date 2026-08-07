@@ -138,10 +138,7 @@ export default function Footer() {
               <Mail className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
               <span className="font-medium text-slate-300 group-hover:text-emerald-300">banyuuripboyolali@gmail.com</span>
             </a>
-            <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>www.banyuurip.desa.id</span>
-            </div>
+
           </div>
         </div>
 

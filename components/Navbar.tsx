@@ -58,7 +58,7 @@ export default function Navbar() {
           <span>Desa Banyuurip, Kecamatan Klego, Kabupaten Boyolali</span>
         </div>
         <div className="flex items-center gap-4 text-emerald-200 text-xs">
-          <span>Jam Pelayanan: Senin - Jumat (08.00 - 15.00 WIB)</span>
+          <span>Jam Pelayanan: Senin - Jumat (08.00 - 14.00 WIB)</span>
           <span className="hidden md:inline">|</span>
           <Link href="/login" className="text-emerald-300 hover:text-white font-bold flex items-center gap-1 underline underline-offset-2">
             <UserCheck className="w-3.5 h-3.5 text-emerald-400" />

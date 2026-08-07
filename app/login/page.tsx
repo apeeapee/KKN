@@ -75,18 +75,8 @@ function LoginForm() {
       {errorMsg && (
         <div className="bg-rose-50 border border-rose-200 text-rose-800 p-3 rounded-xl text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-          <span>{errorMsg}</span>
         </div>
       )}
-
-      {/* Demo Hint */}
-      <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-[11px] text-emerald-900 space-y-0.5">
-        <p className="font-bold flex items-center gap-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" /> Kredensial Default Admin:
-        </p>
-        <p>Username: <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-emerald-300">admin</code></p>
-        <p>Password: <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-emerald-300">banyuurip2026</code></p>
-      </div>
 
       <form onSubmit={handleLogin} className="space-y-4 text-xs">
         <div>
@@ -128,8 +118,8 @@ function LoginForm() {
           ) : (
             <Square className="w-4 h-4 text-slate-400 shrink-0" />
           )}
-          <span className="text-[11px] font-medium">
-            Tetap Masuk (Simpan Sesi Admin - 30 Hari Tanpa Auto Logout)
+          <span className="text-xs font-medium">
+            Tetap masuk
           </span>
         </div>
 
